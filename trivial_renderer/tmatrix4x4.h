@@ -15,12 +15,9 @@ public:
   inline explicit TMatrix4x4(const float *values);
   inline TMatrix4x4(const float *values, int cols, int rows);
 
-  // Interfaz
-
+  // Operadores
   inline const float &operator()(int row, int column) const;
   inline float &operator()(int row, int column);
-
-  // Operadores
   inline TMatrix4x4 &operator+=(const TMatrix4x4 &other);
   inline TMatrix4x4 &operator-=(const TMatrix4x4 &other);
   inline TMatrix4x4 &operator*=(const TMatrix4x4 &other);
@@ -48,35 +45,35 @@ public:
   friend TMatrix4x4 operator/(const TMatrix4x4 &matrix, float m);
 
   // Métodos
-  inline bool isAffine() const;
-  inline bool isIdentity() const;
-  inline void setToIdentity();
-  inline void fill(float value);
-  double determinant() const;
-  TMatrix4x4 inverted(bool *invertible = nullptr) const;
-  TMatrix4x4 transposed() const;
-  inline TVector4D column(int index) const;
-  inline void setColumn(int index, const TVector4D &value);
-  inline TVector4D row(int index) const;
-  inline void setRow(int index, const TVector4D &value);
+  constexpr bool isAffine() const;
+  constexpr bool isIdentity() const;
+  constexpr void setToIdentity();
+  constexpr void fill(float value);
+  constexpr double determinant() const;
+  constexpr TMatrix4x4 inverted(bool *invertible = nullptr) const;
+  constexpr TMatrix4x4 transposed() const;
+  constexpr TVector4D column(int index) const;
+  constexpr void setColumn(int index, const TVector4D &value);
+  constexpr TVector4D row(int index) const;
+  constexpr void setRow(int index, const TVector4D &value);
 
   // Escalar
-  void scale(const TVector3D &vector);
-  void scale(float x, float y);
-  void scale(float x, float y, float z);
-  void scale(float m);
+  constexpr void scale(const TVector3D &vector);
+  constexpr void scale(float x, float y);
+  constexpr void scale(float x, float y, float z);
+  constexpr void scale(float m);
 
   // Trasladar
-  void translate(const TVector3D &vector);
-  void translate(float x, float y);
-  void translate(float x, float y, float z);
+  constexpr void translate(const TVector3D &vector);
+  constexpr void translate(float x, float y);
+  constexpr void translate(float x, float y, float z);
 
   // Rotar
-  void rotateX(float angle, const TVector3D &vector);
-  void rotateY(float angle, const TVector3D &vector);
-  void rotateZ(float angle, const TVector3D &vector);
+  constexpr void rotateX(float angle, const TVector3D &vector);
+  constexpr void rotateY(float angle, const TVector3D &vector);
+  constexpr void rotateZ(float angle, const TVector3D &vector);
 
-  void viewport(const TPoint &p1, const TPoint &p2);
+  constexpr void viewport(const TPoint &p1, const TPoint &p2);
 
   inline float *data() { return *m; };
   inline const float *data() const { return *m; }
@@ -376,66 +373,4 @@ inline TMatrix4x4 operator*(const TMatrix4x4 &matrix, float factor) {
   return m;
 }
 
-inline bool TMatrix4x4::isAffine() const {
-  return m[0][3] == 0.0f && m[1][3] == 0.0f && m[2][3] == 0.0f &&
-         m[3][3] == 1.0f;
-}
-
-inline bool TMatrix4x4::isIdentity() const {
-  if (m[0][0] != 1.0f || m[0][1] != 0.0f || m[0][2] != 0.0f || m[0][3] != 0.0f)
-    return false;
-  if (m[1][0] != 0.0f || m[1][1] != 1.0f || m[1][2] != 0.0f || m[1][3] != 0.0f)
-    return false;
-  if (m[2][0] != 0.0f || m[2][1] != 0.0f || m[2][2] != 1.0f || m[2][3] != 0.0f)
-    return false;
-  if (m[3][0] != 0.0f || m[3][1] != 0.0f || m[3][2] != 0.0f)
-    return false;
-  return (m[3][3] == 1.0f);
-}
-
-inline void TMatrix4x4::setToIdentity() {
-
-  for (auto j = 0; j < 4; j++)
-    for (auto i = 0; i < 4; i++)
-      m[j][i] = 0.0f;
-
-  m[0][0] = 1.0f;
-  m[1][1] = 1.0f;
-  m[2][2] = 1.0f;
-  m[3][3] = 1.0f;
-}
-
-inline void TMatrix4x4::fill(float value) {
-  for (auto j = 0; j < 4; j++)
-    for (auto i = 0; i < 4; i++)
-      m[j][i] = value;
-}
-inline TVector4D TMatrix4x4::column(int index) const {
-  if (index >= 0 && index < 4)
-    return TVector4D(m[index][0], m[index][1], m[index][2], m[index][3]);
-}
-
-inline void TMatrix4x4::setColumn(int index, const TVector4D &value) {
-  if (index >= 0 && index < 4) {
-    m[index][0] = value.x;
-    m[index][1] = value.y;
-    m[index][2] = value.z;
-    m[index][3] = value.w;
-  }
-}
-
-inline TVector4D TMatrix4x4::row(int index) const {
-  if (index >= 0 && index < 4)
-    return TVector4D(m[0][index], m[1][index], m[2][index], m[3][index]);
-}
-
-inline void TMatrix4x4::setRow(int index, const TVector4D &value) {
-  if (index >= 0 && index < 4) {
-    m[0][index] = value.x;
-    m[1][index] = value.y;
-    m[2][index] = value.z;
-    m[3][index] = value.w;
-  }
-}
-inline void TMatrix4x4::viewport(const TPoint &p1, const TPoint &p2) {}
 #endif // TMATRIX4X4_H

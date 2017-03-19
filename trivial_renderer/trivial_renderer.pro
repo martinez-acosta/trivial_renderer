@@ -25,14 +25,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    tdraw.cpp
+    tvector3d.cpp \
+    tvector4d.cpp \
+    tmatrix4x4.cpp \
+    tdraw.cpp \
+    treadmodel.cpp
 
 HEADERS  += mainwindow.h \
-    tdraw.h \
     tpoint.h \
     tmatrix4x4.h \
     tvector3d.h \
-    tvector4d.h
+    tvector4d.h \
+    tdraw.h \
+    treadmodel.h
 
 FORMS    += mainwindow.ui
 CONFIG += c++14

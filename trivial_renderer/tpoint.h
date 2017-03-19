@@ -10,11 +10,6 @@ public:
 
   constexpr inline bool isCeroVector() const;
 
-  constexpr inline int getX() const;
-  constexpr inline int getY() const;
-  void setX(int x);
-  void setY(int y);
-
   inline int &rx();
   inline int &ry();
 
@@ -59,14 +54,6 @@ constexpr inline TPoint::TPoint() : x(0), y(0) {}
 constexpr inline TPoint::TPoint(int x, int y) : x(x), y(y) {}
 
 constexpr inline bool TPoint::isCeroVector() const { return x == 0 && y == 0; }
-
-constexpr inline int TPoint::getX() const { return x; }
-
-constexpr inline int TPoint::getY() const { return y; }
-
-inline void TPoint::setX(int k) { x = k; }
-
-inline void TPoint::setY(int k) { y = k; }
 
 inline int &TPoint::rx() { return x; }
 
