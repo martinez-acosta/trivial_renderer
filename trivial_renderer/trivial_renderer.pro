@@ -29,7 +29,7 @@ SOURCES += main.cpp\
     tvector4d.cpp \
     tmatrix4x4.cpp \
     tdraw.cpp \
-    treadmodel.cpp
+    tmodel.cpp
 
 HEADERS  += mainwindow.h \
     tpoint.h \
@@ -37,7 +37,7 @@ HEADERS  += mainwindow.h \
     tvector3d.h \
     tvector4d.h \
     tdraw.h \
-    treadmodel.h
+    tmodel.h
 
 FORMS    += mainwindow.ui
 CONFIG += c++14
