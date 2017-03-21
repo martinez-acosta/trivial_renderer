@@ -1,24 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>928</width>
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QMenuBar" name="menuBar" />
-  <widget class="QToolBar" name="mainToolBar" />
-  <widget class="QWidget" name="centralWidget" />
-  <widget class="QStatusBar" name="statusBar" />
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QMdiArea" name="mdiArea">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>0</y>
+      <width>191</width>
+      <height>221</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rotate:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>58</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Scale:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>120</y>
+      <width>58</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Translate:</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>928</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuTransformaciones">
+    <property name="title">
+     <string>T&amp;ransformations</string>
+    </property>
+    <widget class="QMenu" name="menuRotar">
+     <property name="title">
+      <string>&amp;Rotate</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionRotateX"/>
+     <addaction name="actionRotateY"/>
+     <addaction name="actionRotateZ"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="actionScale"/>
+    <addaction name="menuRotar"/>
+    <addaction name="actionTrasladar"/>
+   </widget>
+   <widget class="QMenu" name="menuLeer_archivo">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+    <addaction name="actionReadObjfile"/>
+    <addaction name="actionReadRawfile"/>
+   </widget>
+   <widget class="QMenu" name="menuRasterizar">
+    <property name="title">
+     <string>Rasteri&amp;ze</string>
+    </property>
+    <addaction name="actionWireframe"/>
+    <addaction name="actionFlatShading"/>
+    <addaction name="actionZBuffer"/>
+    <addaction name="actionPerspectiveProjection"/>
+    <addaction name="actionGouraudShading"/>
+    <addaction name="actionSpecularMapping"/>
+    <addaction name="actionAmbientOcclusion"/>
+   </widget>
+   <addaction name="menuTransformaciones"/>
+   <addaction name="menuLeer_archivo"/>
+   <addaction name="menuRasterizar"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionScale">
+   <property name="text">
+    <string>&amp;Scale</string>
+   </property>
+  </action>
+  <action name="actionRotateX">
+   <property name="text">
+    <string>&amp;RotateX</string>
+   </property>
+  </action>
+  <action name="actionRotateY">
+   <property name="text">
+    <string>R&amp;otateY</string>
+   </property>
+  </action>
+  <action name="actionRotateZ">
+   <property name="text">
+    <string>Rotat&amp;eZ</string>
+   </property>
+  </action>
+  <action name="actionTrasladar">
+   <property name="text">
+    <string>&amp;Translate</string>
+   </property>
+  </action>
+  <action name="actionReadObjfile">
+   <property name="text">
+    <string>&amp;Read Objfile</string>
+   </property>
+  </action>
+  <action name="actionReadRawfile">
+   <property name="text">
+    <string>R&amp;ead Rawfile</string>
+   </property>
+  </action>
+  <action name="actionRasterizar">
+   <property name="text">
+    <string>Rasterizar</string>
+   </property>
+  </action>
+  <action name="actionWireframe">
+   <property name="text">
+    <string>&amp;Wireframe</string>
+   </property>
+  </action>
+  <action name="actionFlatShading">
+   <property name="text">
+    <string>&amp;Flat shading </string>
+   </property>
+  </action>
+  <action name="actionZBuffer">
+   <property name="text">
+    <string>&amp;Z-Buffer</string>
+   </property>
+  </action>
+  <action name="actionPerspectiveProjection">
+   <property name="text">
+    <string>&amp;Perspective projection</string>
+   </property>
+  </action>
+  <action name="actionGouraudShading">
+   <property name="text">
+    <string>&amp;Gouraud shading</string>
+   </property>
+  </action>
+  <action name="actionPhongShading">
+   <property name="text">
+    <string>Phong shading</string>
+   </property>
+  </action>
+  <action name="actionSpecularMapping">
+   <property name="text">
+    <string>&amp;Shadow mapping</string>
+   </property>
+  </action>
+  <action name="actionAmbientOcclusion">
+   <property name="text">
+    <string>&amp;Ambient occlusion</string>
+   </property>
+  </action>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
 </ui>

@@ -4,41 +4,47 @@
 #include <sstream>
 #include <string>
 
-TModel::TModel() {}
+TModel::TModel(std::string &filename) { name = filename; }
 void TModel::readObjFile(const std::string &filename) {
   std::string line;
+  std::string tmp;
   std::ifstream input(filename, std::ios::in);
 
   if (!input.is_open())
     return;
 
   while (std::getline(input, line)) {
-    if (line[0] == 'v' && line[1] == ' ')
-      getVertex(line);
-    if (line[0] == 'f' && line[1] == ' ')
-      getFace(line);
+    if (line[0] == 'v' && line[1] == ' ') {
+      tmp = line.substr(2);
+      getVertex(tmp);
+    }
+
+    if (line[0] == 'f' && line[1] == ' ') {
+      tmp = line.substr(2);
+      getFace(tmp);
+    }
   }
   input.close();
 }
 
 void TModel::getVertex(std::string &line) {
-  std::string tmp;
-  std::size_t i = 0;
+  std::vector<std::string> tmp(3);
   TVector4D v;
-  v.w = 1; // Asignamos w por adelantado ya que es muy probable que no
-           // especifiquen ese valor
-  std::stringstream ss(line);
-  while (ss >> tmp) {
-    if (i < 3) {
-      v[i] = std::stof(tmp);
-    } else if (i == 3) {
-      v[i] = std::stof(tmp);
-      break;
-    }
-    i++;
-  }
-  vertexes.push_back(v);
+  v[3] = 1.0f;
+
+  boost::split(tmp, line, boost::is_any_of(" "));
+
+  v[0] = std::stof(tmp.at(0));
+  v[1] = std::stof(tmp.at(1));
+  v[2] = std::stof(tmp.at(2));
+
+  if (tmp.size() > 3)
+    v[3] = std::stof(tmp.at(3));
+  else
+    v[3] = 1.0f;
+  list_vertexes.push_back(v);
 }
+
 void TModel::getFace(std::string &line) {
   int vertex[3];
   int texture[3];
@@ -67,6 +73,7 @@ void TModel::getFace(std::string &line) {
         texture[i] = std::stoi(vertex_string.at(1));
         break;
       case 3: // Si hay vectores normales
+        there_is_texture = true;
         there_is_normal = true;
         vertex[i] = std::stoi(vertex_string.at(0));
         texture[i] = std::stoi(vertex_string.at(1));
@@ -92,14 +99,14 @@ void TModel::getFace(std::string &line) {
     face_texture.v3 = texture[2];
   }
   if (there_is_normal) {
-    face_vertex.v1 = normal[0];
-    face_vertex.v2 = normal[1];
-    face_vertex.v3 = normal[2];
+    face_normal.v1 = normal[0];
+    face_normal.v2 = normal[1];
+    face_normal.v3 = normal[2];
   }
   // Añadimos los vértices, texturas y normales
-  faces_vertexes.push_back(face_vertex);
+  faces_for_vertexes.push_back(face_vertex);
   if (there_is_texture)
-    faces_textures.push_back(face_texture);
+    faces_for_textures.push_back(face_texture);
   if (there_is_normal)
-    faces_normals.push_back(face_normal);
+    faces_for_normals.push_back(face_normal);
 }

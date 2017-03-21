@@ -50,11 +50,11 @@ public:
   constexpr void setToIdentity();
   constexpr void fill(float value);
   constexpr double determinant() const;
-  constexpr TMatrix4x4 inverted(bool *invertible = nullptr) const;
-  constexpr TMatrix4x4 transposed() const;
-  constexpr TVector4D column(int index) const;
+  TMatrix4x4 inverted(bool *invertible = nullptr) const;
+  TMatrix4x4 transposed() const;
+  TVector4D column(int index) const;
   constexpr void setColumn(int index, const TVector4D &value);
-  constexpr TVector4D row(int index) const;
+  TVector4D row(int index) const;
   constexpr void setRow(int index, const TVector4D &value);
 
   // Escalar

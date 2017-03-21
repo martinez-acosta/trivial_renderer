@@ -6,19 +6,18 @@ class TVector3D {
 public:
   float x, y, z;
   // Constructores
-  constexpr TVector3D();
-  constexpr TVector3D(float x, float y, float z);
-  constexpr explicit TVector3D(const TPoint &p);
+  TVector3D();
+  TVector3D(float x, float y, float z);
+  explicit TVector3D(const TPoint &p);
 
   // Métodos
   constexpr float length() const;
   constexpr float lengthSquared() const;
   constexpr bool isCeroVector() const;
-  constexpr TPoint toPoint() const;
-  constexpr TVector3D normalize() const;
   constexpr float dotProduct(const TVector3D &v1, const TVector3D &v2) const;
-  constexpr TVector3D crossProduct(const TVector3D &v1,
-                                   const TVector3D &v2) const;
+  TPoint toPoint() const;
+  TVector3D normalize() const;
+  TVector3D crossProduct(const TVector3D &v1, const TVector3D &v2) const;
 
   // Operadores:
   float &operator[](std::size_t i);

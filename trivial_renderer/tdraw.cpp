@@ -1,26 +1,47 @@
 #include "tdraw.h"
 
-constexpr TDraw::TDraw() : r(255), g(255), b(255), x(0), y(0) {}
+TDraw::TDraw() : a(255), r(0), g(0), b(0), x(0), y(0) {}
 
 constexpr bool TDraw::isInImage(const TPoint &p,
                                 const TPoint &resolution) const {
   return p.x >= 0 && p.x < resolution.x && p.y >= 0 && p.y < resolution.y;
 }
+void TDraw::bresenhamLine(const TVector4D &p1, const TVector4D &p2,
+                          unsigned int *img, const TPoint &res) {
+  TPoint p{static_cast<int>(std::round(p1.x)),
+           static_cast<int>(std::round(p1.y))};
 
-constexpr void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2,
-                                    int *img, const TPoint &res) {
-  TPoint p(p1);
-  TPoint q(p2);
+  TPoint q{static_cast<int>(std::round(p2.x)),
+           static_cast<int>(std::round(p2.y))};
+  bresenhamLine(p, q, img, res);
+}
 
+constexpr unsigned int TDraw::getColor(int a, int r, int g, int b) const {
+  unsigned int color = ((a << 24) & 0xff000000) | ((r << 16) & 0x00ff0000) |
+                       ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
+  return color;
+}
+
+constexpr unsigned int TDraw::getColor(int r, int g, int b) const {
+  unsigned int color = (0xff000000) | ((r << 16) & 0x00ff0000) |
+                       ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
+  return color;
+}
+
+void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2, unsigned int *img,
+                          const TPoint &res) {
+
+  TPoint p{p1};
+  TPoint q{p2};
   // El punto p (punto inicial) debe estar más a la izquierda que
   // el punto q
-  if (q.x > p.x) {
+  if (q.x < p.x) {
     std::swap(q.x, p.x);
     std::swap(q.y, p.y);
   }
 
   // Si es el mismo punto, lo dibujamos y salimos
-  if (p.y == q.y && p.x == q.x) {
+  if (p == q) {
     return;
   }
 
@@ -40,17 +61,17 @@ constexpr void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2,
 
   // Dibujamos punto inicial y final
   if (isInImage(p, res))
-    img[res.x * p.y + p.x] = (r << 16) | (g << 8) | b;
+    img[res.x * p.y + p.x] = getColor(a, r, g, b);
 
   if (isInImage(q, res))
-    img[res.x * q.y + q.x] = (r << 16) | (g << 8) | b;
+    img[res.x * q.y + q.x] = getColor(a, r, g, b);
 
   // Si es una línea horizontal
   if (p.y == q.y) {
 
     for (x = p.x; x <= q.x; x++)
       if (isInImage(TPoint(x, p.y), res))
-        img[res.x * p.y + x] = (r << 16) | (g << 8) | b;
+        img[res.x * p.y + x] = getColor(a, r, g, b);
     return;
   }
 
@@ -61,15 +82,15 @@ constexpr void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2,
       std::swap(p.y, q.y);
     for (y = p.y; y <= q.y; y++)
       if (isInImage(TPoint(p.x, y), res))
-        img[res.x * y + q.x] = (r << 16) | (g << 8) | b;
+        img[res.x * y + q.x] = getColor(a, r, g, b);
     return;
   }
 
   // Trasladamos el segmento de línea a que empiece en el origen y tenga una
   // pendiente 0 <= m <= 1
-  Octant octant = toFirstOctant(p, q);
   TPoint initial{p};
-  TPoint delta{p - q};
+  Octant octant = toFirstOctant(p, q);
+  TPoint delta{q - p};
   TPoint tmp;
   int o = 2 * (delta.y - delta.x);
   int twoDy = 2 * delta.y;
@@ -124,24 +145,24 @@ constexpr void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2,
     interpolated += initial;
     // Guardamos el punto en el framebuffer
     if (isInImage(interpolated, res))
-      img[res.x * interpolated.y + interpolated.x] =
-          (r << 16) | (g << 8) | (b & 0xff);
+      img[res.x * interpolated.y + interpolated.x] = getColor(a, r, g, b);
   }
 }
 
-constexpr void TDraw::explicitLine(const TPoint &p1, const TPoint &p2, int *img,
-                                   const TPoint &res) {
+void TDraw::explicitLine(const TPoint &p1, const TPoint &p2, int *img,
+                         const TPoint &res) {
   float m = (p2.y - p1.y) / (p2.x - p1.x);
   float k = 0;
   k = p1.y - m * p1.x;
   for (int x = p1.x; x <= p2.x; x++) {
     y = static_cast<int>(std::round(m * x + k));
     if (isInImage(TPoint(x, y), res))
-      img[res.x * y + x] = (r << 16) | (g << 8) | (b & 0xff);
+      img[res.x * y + x] = getColor(a, r, g, b);
   }
 }
 
 TDraw::Octant TDraw::toFirstOctant(TPoint &p1, TPoint &p2) {
+  TPoint initial{p1};
   TPoint delta(p2 - p1);
   Octant octant;
 
@@ -185,20 +206,20 @@ TDraw::Octant TDraw::toFirstOctant(TPoint &p1, TPoint &p2) {
   }
 
   // Trasladamos el segmento de línea a que empiece en el origen
-  p1 -= delta;
-  p2 -= delta;
+  p1 -= initial;
+  p2 -= initial;
 
-  // El vector p está en la posición (0,0,0,1)
+  // El vector p1 está en la posición (0,0,0,1)
   // Rotamos el segmento de línea al primer octante
   switch (octant) {
   case Octant::first:
     break;
   case Octant::second:
-    std::swap(p1.x, p2.y);
+    std::swap(p2.x, p2.y);
     break;
   case Octant::third:
     p2.x *= -1;
-    std::swap(p1.x, p2.y);
+    std::swap(p2.x, p2.y);
     break;
   case Octant::fourth:
     p2.y *= -1;

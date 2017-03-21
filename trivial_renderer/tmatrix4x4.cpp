@@ -35,7 +35,7 @@ constexpr void TMatrix4x4::fill(float value) {
       m[j][i] = value;
 }
 
-constexpr TVector4D TMatrix4x4::column(int index) const {
+TVector4D TMatrix4x4::column(int index) const {
   if (index >= 0 && index < 4)
     return TVector4D(m[index][0], m[index][1], m[index][2], m[index][3]);
 }
@@ -49,7 +49,7 @@ constexpr void TMatrix4x4::setColumn(int index, const TVector4D &value) {
   }
 }
 
-constexpr TVector4D TMatrix4x4::row(int index) const {
+TVector4D TMatrix4x4::row(int index) const {
   if (index >= 0 && index < 4)
     return TVector4D(m[0][index], m[1][index], m[2][index], m[3][index]);
 }

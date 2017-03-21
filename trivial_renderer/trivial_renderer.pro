@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     tvector4d.cpp \
     tmatrix4x4.cpp \
     tdraw.cpp \
-    tmodel.cpp
+    tmodel.cpp \
+    timage.cpp
 
 HEADERS  += mainwindow.h \
     tpoint.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     tvector3d.h \
     tvector4d.h \
     tdraw.h \
-    tmodel.h
+    tmodel.h \
+    timage.h
 
 FORMS    += mainwindow.ui
 CONFIG += c++14

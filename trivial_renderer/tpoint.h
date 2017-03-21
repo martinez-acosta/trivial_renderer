@@ -9,6 +9,9 @@ public:
   constexpr TPoint(int xpos, int ypos);
 
   constexpr inline bool isCeroVector() const;
+  constexpr static inline int dotProduct(const TPoint &p1, const TPoint &p2) {
+    return p1.x * p2.x + p1.y * p2.y;
+  }
 
   inline int &rx();
   inline int &ry();
@@ -20,10 +23,6 @@ public:
   TPoint &operator*=(double m);
   TPoint &operator*=(int m);
   TPoint &operator/=(float m);
-
-  constexpr static inline int dotProduct(const TPoint &p1, const TPoint &p2) {
-    return p1.x * p2.x + p1.y * p2.y;
-  }
 
   constexpr friend inline bool operator==(const TPoint &, const TPoint &);
   constexpr friend inline bool operator!=(const TPoint &, const TPoint &);
