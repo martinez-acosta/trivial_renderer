@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-TModel::TModel(std::string &filename) { name = filename; }
+TModel::TModel(const std::string &filename) { name = filename; }
 void TModel::readObjFile(const std::string &filename) {
   std::string line;
   std::string tmp;

@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     tmatrix4x4.cpp \
     tdraw.cpp \
     tmodel.cpp \
-    timage.cpp
+    timage.cpp \
+    tdialog.cpp
 
 HEADERS  += mainwindow.h \
     tpoint.h \
@@ -39,7 +40,9 @@ HEADERS  += mainwindow.h \
     tvector4d.h \
     tdraw.h \
     tmodel.h \
-    timage.h
+    timage.h \
+    tdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    tdialog.ui
 CONFIG += c++14

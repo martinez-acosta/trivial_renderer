@@ -33,9 +33,16 @@ void MainWindow::createModel() {
 void MainWindow::rasterize() {
   QObject *obj = sender();
   QString objName = obj->objectName();
+
   // Wireframe
   if (!objName.compare(ui->actionWireframe->objectName())) {
-    // Transformaciones
+    // Pedimos datos de las transformaciones a realizar
+    TDialog *dialog = new TDialog();
+    if (dialog->exec()) {
+      dialog->getOptions();
+    }
+
+    /*// Transformaciones
     unsigned int imagen[1920 * 1080];
 
     for (int i = 0; i < 1920 * 1080; i++) {
@@ -62,6 +69,7 @@ void MainWindow::rasterize() {
     QImage img(reinterpret_cast<unsigned char *>(imagen), 1920, 1080,
                QImage::Format_ARGB32_Premultiplied);
     img.save("salida.png");
+    */
   }
 }
 MainWindow::~MainWindow() { delete ui; }

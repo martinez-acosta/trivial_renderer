@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "tdialog.h"
 #include "tmodel.h"
 #include <QMainWindow>
 #include <QMdiArea>
