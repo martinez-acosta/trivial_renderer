@@ -1,10 +1,5 @@
-#include "mainwindow.h"
+
 #include "tdraw.h"
-#include "ui_mainwindow.h"
-#include <QAction>
-#include <QFileDialog>
-#include <QImage>
-#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
