@@ -1,7 +1,7 @@
-#include "timage/timage.h"
-#include "tinput/tinput.h"
-#include "tmath/tmatrix4x4.h"
-#include "tmodel/tmodel.h"
+#include "timage.h"
+#include "tinput.h"
+#include "tmatrix4x4.h"
+#include "tmodel.h"
 #include <iostream>
 int main(int argc, char *argv[]) {
   // Obtenemos datos de entrada
