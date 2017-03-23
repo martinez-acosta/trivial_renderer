@@ -1,0 +1,21 @@
+purpose "Crear varios rasterizados de un modelo 3D"
+usage "trivial_renderer [OPTION...]"
+description "Crea varios rasterizados"
+package "trivial_renderer"
+version "0.1"
+
+#Options
+option "input" i "Archivo a leer" string required
+option "output" o "Archivo de salida" string required
+option "resolution" - "Resolución de la imagen en la forma <x,y>" string required
+option "raster-wireframe" - "Raster wireframe a hacer" optional
+option "viewport" - "Rectángulo que acota al modelo 3D en la imagen(Esta opción desactiva scale y translate)" string optional
+option "rotate" r "Rotación con respecto al eje x,y,z en grados" string optional
+option "scale" s "Escalar la figura en x,y,z" string optional
+option "translate" t "Trasladar a un punto (x,y,z)" string optional
+option "rotate-x" - "Rotación con respecto al eje x en grados" string optional
+option "rotate-y" - "Rotación con respecto al eje y en grados" string optional
+option "rotate-z" - "Rotación con respecto al eje z en grados" string optional
+option "scale-x" - "Escalar la figura en x" string optional
+option "scale-y" - "Escalar la figura en y" string optional
+option "scale-z" - "Escalar la figura en z" string optional

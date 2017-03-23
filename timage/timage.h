@@ -4,11 +4,11 @@
 class TImage {
 
 public:
-  TImage();
+  TImage(const std::size_t &width, const std::size_t &height);
   inline std::size_t getWidth() const { return width; }
   inline std::size_t getHeight() const { return height; }
   inline std::string getName() const { return name; }
-  unsigned char *getData();
+  inline unsigned char *getData() const { return data; }
 
 private:
   std::size_t width;

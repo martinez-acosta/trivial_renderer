@@ -1,7 +1,6 @@
 #ifndef TMODEL_H
 #define TMODEL_H
-#include "tvector3d.h"
-#include "tvector4d.h"
+#include "../tmath/tvector4d.h"
 #include <string>
 #include <vector>
 class TModel {
@@ -12,8 +11,12 @@ public:
     int v3;
   };
   TModel(const std::string &filename);
-  void readObjFile(const std::string &filename);
-  void readRawFile(const std::string &filename);
+  void rotate(const TVector3D &vector);
+  void scale(const TVector3D &vector);
+  void translate(const TVector3D &vector);
+
+private:
+  std::string name;
   std::vector<TVector4D> list_vertexes;
   std::vector<TVector3D> list_textures;
   std::vector<TVector3D> list_normals;
@@ -22,10 +25,10 @@ public:
   std::vector<struct face> faces_for_textures;
   std::vector<struct face> faces_for_normals;
 
-private:
-  std::string name;
   void getVertex(std::string &line);
   void getFace(std::string &line);
+  void readObjFile(const std::string &filename);
+  void readRawFile(const std::string &filename);
 };
 
 #endif // TMODEL_H

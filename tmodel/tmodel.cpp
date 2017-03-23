@@ -4,7 +4,14 @@
 #include <sstream>
 #include <string>
 
-TModel::TModel(const std::string &filename) { name = filename; }
+TModel::TModel(const std::string &filename) {
+  name = filename;
+  if (name.find(".obj") != std::string::npos)
+    readObjFile(name);
+
+  if (name.find(".raw") != std::string::npos)
+    readObjFile(name);
+}
 void TModel::readObjFile(const std::string &filename) {
   std::string line;
   std::string tmp;

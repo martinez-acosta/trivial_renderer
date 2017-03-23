@@ -1,0 +1,3 @@
+/mnt/win2/Users/lalo/Dropbox/escom/ComputerGraphics/practicas/trivial_renderer/build/CMakeFiles/edit_cache.dir
+/mnt/win2/Users/lalo/Dropbox/escom/ComputerGraphics/practicas/trivial_renderer/build/CMakeFiles/rebuild_cache.dir
+/mnt/win2/Users/lalo/Dropbox/escom/ComputerGraphics/practicas/trivial_renderer/build/CMakeFiles/trender.dir
