@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/trender.dir/main.cpp.o  -o trender 
