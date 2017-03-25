@@ -1,9 +1,10 @@
 #ifndef TINPUT_H
 #define TINPUT_H
-#include "../tmath/tvector4d.h"
 #include "cmdline.h"
+#include "tvector4d.h"
+#include <boost/math/constants/constants.hpp>
 #include <iostream>
-#include <tuple>
+
 struct viewport {
   TPoint p1;
   TPoint p2;
@@ -11,7 +12,7 @@ struct viewport {
 class TInput {
 public:
   TInput();
-  void getInput(int argc, char *argv[]);
+  void getInput(int argc, char **argv);
   std::string in_filename;
   std::string out_filename;
   TPoint resolution;
@@ -31,6 +32,7 @@ public:
   TVector3D translate_vector;
 
 private:
+  static constexpr const float pi = boost::math::constants::pi<float>();
   struct gengetopt_args_info args_info;
   void error(const std::string &s) const;
   void getRotate();
@@ -38,7 +40,7 @@ private:
   void getTranslate();
   void getViewport();
   void getResolution();
-  constexpr float toRad(float degree) const;
+  float toRad(float degree) const;
 };
 
 #endif // TINPUT_H

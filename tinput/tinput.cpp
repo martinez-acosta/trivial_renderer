@@ -1,9 +1,9 @@
 #include "tinput.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/math/constants/constants.hpp>
 #include <vector>
 
 TInput::TInput() {
+
   rotate_given = false;
 
   scale_given = false;
@@ -19,7 +19,8 @@ TInput::TInput() {
   translate_vector = TVector3D(0.0f, 0.0f, 0.0f);
 }
 
-void TInput::getInput(int argc, char *argv[]) {
+void TInput::getInput(int argc, char **argv) {
+
   if (cmdline_parser(argc, argv, &args_info))
     error("Error from cmdline_parse() in getInput(int argc, char *argv[])");
 
@@ -133,7 +134,8 @@ void TInput::getViewport() {
   viewport_given = true;
 
   std::vector<std::string> str_vector;
-  std::string tmp{args_info.translate_arg};
+  std::string tmp{args_info.viewport_arg};
+
   boost::split(str_vector, tmp, boost::is_any_of(","));
 
   if (str_vector.size() == 4) {
@@ -154,10 +156,7 @@ void TInput::getResolution() {
   }
 }
 
-constexpr float TInput::toRad(float degree) const {
-
-  return degree * (boost::math::constants::pi<float>() / 180.0f);
-}
+float TInput::toRad(float degree) const { return degree * (pi / 180.0f); }
 
 void TInput::error(const std::string &s) const {
   std::cout << s << ": " << '\n';

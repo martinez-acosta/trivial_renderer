@@ -1,6 +1,6 @@
 #ifndef TMODEL_H
 #define TMODEL_H
-#include "../tmath/tvector4d.h"
+#include "tvector4d.h"
 #include <string>
 #include <vector>
 class TModel {

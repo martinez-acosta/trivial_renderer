@@ -45,35 +45,35 @@ public:
   friend TMatrix4x4 operator/(const TMatrix4x4 &matrix, float m);
 
   // Métodos
-  constexpr bool isAffine() const;
-  constexpr bool isIdentity() const;
-  constexpr void setToIdentity();
-  constexpr void fill(float value);
-  constexpr double determinant() const;
+   bool isAffine() const;
+   bool isIdentity() const;
+   void setToIdentity();
+   void fill(float value);
+   double determinant() const;
   TMatrix4x4 inverted(bool *invertible = nullptr) const;
   TMatrix4x4 transposed() const;
   TVector4D column(int index) const;
-  constexpr void setColumn(int index, const TVector4D &value);
+   void setColumn(int index, const TVector4D &value);
   TVector4D row(int index) const;
-  constexpr void setRow(int index, const TVector4D &value);
+   void setRow(int index, const TVector4D &value);
 
   // Escalar
-  constexpr void scale(const TVector3D &vector);
-  constexpr void scale(float x, float y);
-  constexpr void scale(float x, float y, float z);
-  constexpr void scale(float m);
+   void scale(const TVector3D &vector);
+   void scale(float x, float y);
+   void scale(float x, float y, float z);
+   void scale(float m);
 
   // Trasladar
-  constexpr void translate(const TVector3D &vector);
-  constexpr void translate(float x, float y);
-  constexpr void translate(float x, float y, float z);
+   void translate(const TVector3D &vector);
+   void translate(float x, float y);
+   void translate(float x, float y, float z);
 
   // Rotar
-  constexpr void rotateX(float angle, const TVector3D &vector);
-  constexpr void rotateY(float angle, const TVector3D &vector);
-  constexpr void rotateZ(float angle, const TVector3D &vector);
+   void rotateX(float angle, const TVector3D &vector);
+   void rotateY(float angle, const TVector3D &vector);
+   void rotateZ(float angle, const TVector3D &vector);
 
-  constexpr void viewport(const TPoint &p1, const TPoint &p2);
+   void viewport(const TPoint &p1, const TPoint &p2);
 
   inline float *data() { return *m; };
   inline const float *data() const { return *m; }
@@ -326,11 +326,11 @@ inline TPoint operator*(const TPoint &point, const TMatrix4x4 &matrix) {
   y = xin * matrix.m[1][0] + yin * matrix.m[1][1] + matrix.m[1][3];
   w = xin * matrix.m[3][0] + yin * matrix.m[3][1] + matrix.m[3][3];
   if (w == 1.0f)
-    return TPoint(static_cast<int>(std::round(x)),
-                  static_cast<int>(std::round(y)));
+    return TPoint(static_cast<int>(round(x)),
+                  static_cast<int>(round(y)));
   else
-    return TPoint(static_cast<int>(std::round(x / w)),
-                  static_cast<int>(std::round(y / w)));
+    return TPoint(static_cast<int>(round(x / w)),
+                  static_cast<int>(round(y / w)));
 }
 
 inline TPoint operator*(const TMatrix4x4 &matrix, const TPoint &point) {
@@ -342,11 +342,11 @@ inline TPoint operator*(const TMatrix4x4 &matrix, const TPoint &point) {
   y = xin * matrix.m[0][1] + yin * matrix.m[1][1] + matrix.m[3][1];
   w = xin * matrix.m[0][3] + yin * matrix.m[1][3] + matrix.m[3][3];
   if (w == 1.0f)
-    return TPoint(static_cast<int>(std::round(x)),
-                  static_cast<int>(std::round(y)));
+    return TPoint(static_cast<int>(round(x)),
+                  static_cast<int>(round(y)));
   else
-    return TPoint(static_cast<int>(std::round(x / w)),
-                  static_cast<int>(std::round(y / w)));
+    return TPoint(static_cast<int>(round(x / w)),
+                  static_cast<int>(round(y / w)));
 }
 
 inline TMatrix4x4 operator-(const TMatrix4x4 &matrix) {

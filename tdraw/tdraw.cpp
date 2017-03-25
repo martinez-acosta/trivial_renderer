@@ -2,7 +2,7 @@
 
 TDraw::TDraw() : a(255), r(0), g(0), b(0), x(0), y(0) {}
 
-constexpr bool TDraw::isInImage(const TPoint &p,
+ bool TDraw::isInImage(const TPoint &p,
                                 const TPoint &resolution) const {
   return p.x >= 0 && p.x < resolution.x && p.y >= 0 && p.y < resolution.y;
 }
@@ -16,13 +16,13 @@ void TDraw::bresenhamLine(const TVector4D &p1, const TVector4D &p2,
   bresenhamLine(p, q, img, res);
 }
 
-constexpr unsigned int TDraw::getColor(int a, int r, int g, int b) const {
+ unsigned int TDraw::getColor(int a, int r, int g, int b) const {
   unsigned int color = ((a << 24) & 0xff000000) | ((r << 16) & 0x00ff0000) |
                        ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
   return color;
 }
 
-constexpr unsigned int TDraw::getColor(int r, int g, int b) const {
+ unsigned int TDraw::getColor(int r, int g, int b) const {
   unsigned int color = (0xff000000) | ((r << 16) & 0x00ff0000) |
                        ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
   return color;

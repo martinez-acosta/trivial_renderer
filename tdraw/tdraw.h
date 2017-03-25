@@ -25,9 +25,9 @@ private:
     seventh = 7,
     eighth = 8
   };
-  constexpr unsigned int getColor(int a, int r, int g, int b) const;
-  constexpr unsigned int getColor(int r, int g, int b) const;
-  constexpr bool isInImage(const TPoint &p, const TPoint &resolution) const;
+   unsigned int getColor(int a, int r, int g, int b) const;
+   unsigned int getColor(int r, int g, int b) const;
+   bool isInImage(const TPoint &p, const TPoint &resolution) const;
   Octant toFirstOctant(TPoint &p1, TPoint &p2);
 };
 

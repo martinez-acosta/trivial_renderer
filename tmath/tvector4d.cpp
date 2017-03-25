@@ -14,15 +14,15 @@ TVector4D::TVector4D(const TVector3D &vector, float w)
 
 TVector4D::TVector4D(const TPoint &p) : x(p.x), y(p.y), z(0.0f), w(0.0f) {}
 
-constexpr float TVector4D::length() const {
+ float TVector4D::length() const {
   return std::sqrt(x * x + y * y + z * z + w * w);
 }
 
-constexpr float TVector4D::lengthSquared() const {
+ float TVector4D::lengthSquared() const {
   return x * x + y * y + z * z + w * w;
 }
 
-constexpr bool TVector4D::isCeroVector() const {
+ bool TVector4D::isCeroVector() const {
   return x == 0.0f && y == 0.0f && z == 0.0f && w == 0.0f;
 }
 
@@ -31,7 +31,7 @@ TPoint TVector4D::toPoint() const {
                 static_cast<int>(std::round(y)));
 }
 
-constexpr float TVector4D::dotProduct(const TVector4D &v1,
+ float TVector4D::dotProduct(const TVector4D &v1,
                                       const TVector4D &v2) const {
   return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
 }

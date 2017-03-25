@@ -26,5 +26,8 @@ int main(int argc, char *argv[]) {
 
   /* Rasterizamos el modelo 3D */
 
-  TImage frame(1920,1080);
+  // Si hay viewport
+  if (input.viewport_given)
+    model.translate(input.translate_vector);
+  TImage frame(1920, 1080);
 }

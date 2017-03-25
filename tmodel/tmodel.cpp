@@ -117,3 +117,7 @@ void TModel::getFace(std::string &line) {
   if (there_is_normal)
     faces_for_normals.push_back(face_normal);
 }
+
+void TModel::rotate(const TVector3D &vector) {}
+void TModel::translate(const TVector3D &vector) {}
+void TModel::scale(const TVector3D &vector) {}

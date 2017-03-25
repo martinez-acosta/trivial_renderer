@@ -15,10 +15,10 @@ public:
   explicit TVector4D(const TPoint &p);
 
   // Métodos
-  constexpr float length() const;
-  constexpr float lengthSquared() const;
-  constexpr float dotProduct(const TVector4D &v1, const TVector4D &v2) const;
-  constexpr bool isCeroVector() const;
+   float length() const;
+   float lengthSquared() const;
+   float dotProduct(const TVector4D &v1, const TVector4D &v2) const;
+   bool isCeroVector() const;
   TVector4D normalize() const;
   TPoint toPoint() const;
   TVector3D toVector3D() const;
