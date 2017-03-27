@@ -27,7 +27,17 @@ int main(int argc, char *argv[]) {
   /* Rasterizamos el modelo 3D */
 
   // Si hay viewport
-  if (input.viewport_given)
-    model.translate(input.translate_vector);
-  TImage frame(1920, 1080);
+  if (input.viewport_given) {
+  }
+
+  // Creamos imagen
+  TImage frame(input.resolution.x, input.resolution.y);
+  unsigned int *data = reinterpret_cast<unsigned int *>(frame.getData());
+
+  // Dibujamos rasterizado wireframe
+  TDraw draw;
+  draw.wireframe(data, input.resolution, model);
+
+  // Salvamos imagen
+  frame.save("salida.png");
 }

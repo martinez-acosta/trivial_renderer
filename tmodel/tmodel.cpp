@@ -1,5 +1,6 @@
 #include "tmodel.h"
 #include <boost/algorithm/string.hpp>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -118,6 +119,75 @@ void TModel::getFace(std::string &line) {
     faces_for_normals.push_back(face_normal);
 }
 
-void TModel::rotate(const TVector3D &vector) {}
-void TModel::translate(const TVector3D &vector) {}
-void TModel::scale(const TVector3D &vector) {}
+void TModel::rotate(const TVector3D &vector) {
+  TMatrix4x4 m;
+
+  // Rotación respecto a x
+  if (vector.x != 0.0f) {
+    m.fill(0.0f);
+    m(0, 0) = 1.0f;
+    m(1, 1) = std::cos(vector.x);
+    m(1, 2) = -1.0f * std::sin(vector.x);
+    m(2, 1) = std::sin(vector.x);
+    m(2, 2) = std::cos(vector.x);
+    m(3, 3) = 1.0f;
+    for (auto &vertex : list_vertexes)
+      vertex = vertex * m;
+  }
+  // Rotación respecto a y
+  if (vector.y != 0.0f) {
+    m.fill(0.0f);
+    m(0, 0) = std::cos(vector.y);
+    m(0, 2) = std::sin(vector.y);
+    m(1, 1) = 1.0f;
+    m(2, 0) = -1.0f * std::sin(vector.y);
+    m(2, 2) = std::cos(vector.y);
+    m(3, 3) = 1.0f;
+    for (auto &vertex : list_vertexes)
+      vertex = vertex * m;
+  }
+
+  // Rotación respecto a z
+  if (vector.z != 0.0f) {
+    m.fill(0.0f);
+    m(0, 0) = std::cos(vector.z);
+    m(0, 1) = -1.0f * std::sin(vector.z);
+    m(1, 0) = std::sin(vector.z);
+    m(1, 1) = std::cos(vector.z);
+    m(2, 2) = 1.0f;
+    m(3, 3) = 1.0f;
+    for (auto &vertex : list_vertexes)
+      vertex = vertex * m;
+  }
+}
+
+void TModel::translate(const TVector3D &vector) {
+  TMatrix4x4 m;
+
+  // Trasladamos
+  m.fill(0.0f);
+  m(0, 3) = vector.x;
+  m(1, 3) = vector.y;
+  m(2, 3) = vector.z;
+  m(0, 0) = 1.0f;
+  m(1, 1) = 1.0f;
+  m(2, 2) = 1.0f;
+  m(3, 3) = 1.0f;
+
+  for (auto &vertex : list_vertexes)
+    vertex = vertex * m;
+}
+
+void TModel::scale(const TVector3D &vector) {
+  TMatrix4x4 m;
+
+  // Escalación
+  m.fill(0.0f);
+  m(0, 0) = vector.x;
+  m(1, 1) = vector.y;
+  m(2, 2) = vector.z;
+  m(3, 3) = 1.0f;
+
+  for (auto &vertex : list_vertexes)
+    vertex = vertex * m;
+}

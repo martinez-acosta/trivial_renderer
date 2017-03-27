@@ -2,8 +2,7 @@
 
 TDraw::TDraw() : a(255), r(0), g(0), b(0), x(0), y(0) {}
 
- bool TDraw::isInImage(const TPoint &p,
-                                const TPoint &resolution) const {
+bool TDraw::isInImage(const TPoint &p, const TPoint &resolution) const {
   return p.x >= 0 && p.x < resolution.x && p.y >= 0 && p.y < resolution.y;
 }
 void TDraw::bresenhamLine(const TVector4D &p1, const TVector4D &p2,
@@ -16,13 +15,13 @@ void TDraw::bresenhamLine(const TVector4D &p1, const TVector4D &p2,
   bresenhamLine(p, q, img, res);
 }
 
- unsigned int TDraw::getColor(int a, int r, int g, int b) const {
+unsigned int TDraw::getColor(int a, int r, int g, int b) const {
   unsigned int color = ((a << 24) & 0xff000000) | ((r << 16) & 0x00ff0000) |
                        ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
   return color;
 }
 
- unsigned int TDraw::getColor(int r, int g, int b) const {
+unsigned int TDraw::getColor(int r, int g, int b) const {
   unsigned int color = (0xff000000) | ((r << 16) & 0x00ff0000) |
                        ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
   return color;
@@ -242,4 +241,20 @@ TDraw::Octant TDraw::toFirstOctant(TPoint &p1, TPoint &p2) {
     break;
   }
   return octant;
+}
+
+void TDraw::wireframe(unsigned int *data, const TPoint &resolution,
+                      const TModel &model) {
+  TVector4D w0, w1, w2;
+  for (auto face : model.faces_for_vertexes) {
+    w0 = model.list_vertexes.at(face.v1 - 1);
+    w1 = model.list_vertexes.at(face.v2 - 1);
+    w2 = model.list_vertexes.at(face.v3 - 1);
+    // w0 con w1
+    bresenhamLine(w0, w1, data, resolution);
+    // w1 con w2
+    bresenhamLine(w1, w2, data, resolution);
+    // w2 con w0
+    bresenhamLine(w2, w0, data, resolution);
+  }
 }

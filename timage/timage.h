@@ -4,16 +4,17 @@
 class TImage {
 
 public:
-  TImage(const std::size_t &width, const std::size_t &height);
-  inline std::size_t getWidth() const { return width; }
-  inline std::size_t getHeight() const { return height; }
+  TImage(const int &width, const int &height);
+  inline ~TImage() { delete data; }
+  inline int getWidth() const { return width; }
+  inline int getHeight() const { return height; }
   inline std::string getName() const { return name; }
-  inline unsigned char *getData() const { return data; }
+  inline unsigned char *getData() { return data; }
+  void save(const std::string &filename);
 
 private:
-  std::size_t width;
-  std::size_t height;
-  std::size_t oX, oY;
+  int width;
+  int height;
   unsigned char *data;
   std::string name;
 };

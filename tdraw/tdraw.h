@@ -1,6 +1,7 @@
 #ifndef TDRAW_H
 #define TDRAW_H
 #include "tmatrix4x4.h"
+#include "tmodel.h"
 #include "tvector4d.h"
 #include <utility>
 class TDraw {
@@ -12,6 +13,8 @@ public:
                      unsigned int *img, const TPoint &resolution);
   void explicitLine(const TPoint &p1, const TPoint &p2, int *img,
                     const TPoint &resolution);
+  void wireframe(unsigned int *data, const TPoint &resolution,
+                 const TModel &model);
 
 private:
   int a, r, g, b, x, y;
@@ -25,9 +28,9 @@ private:
     seventh = 7,
     eighth = 8
   };
-   unsigned int getColor(int a, int r, int g, int b) const;
-   unsigned int getColor(int r, int g, int b) const;
-   bool isInImage(const TPoint &p, const TPoint &resolution) const;
+  unsigned int getColor(int a, int r, int g, int b) const;
+  unsigned int getColor(int r, int g, int b) const;
+  bool isInImage(const TPoint &p, const TPoint &resolution) const;
   Octant toFirstOctant(TPoint &p1, TPoint &p2);
 };
 
