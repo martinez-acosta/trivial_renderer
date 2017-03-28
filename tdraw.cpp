@@ -1,12 +1,12 @@
 #include "tdraw.h"
 
-TDraw::TDraw() : a(255), r(0), g(0), b(0), x(0), y(0) {}
+TDraw::TDraw() : a(100), r(125), g(0), b(255), x(0), y(0) {}
 
 bool TDraw::isInImage(const TPoint &p, const TPoint &resolution) const {
   return p.x >= 0 && p.x < resolution.x && p.y >= 0 && p.y < resolution.y;
 }
 void TDraw::bresenhamLine(const TVector4D &p1, const TVector4D &p2,
-                          unsigned int *img, const TPoint &res) {
+                          std::vector<unsigned char> &img, const TPoint &res) {
   TPoint p{static_cast<int>(std::round(p1.x)),
            static_cast<int>(std::round(p1.y))};
 
@@ -15,20 +15,9 @@ void TDraw::bresenhamLine(const TVector4D &p1, const TVector4D &p2,
   bresenhamLine(p, q, img, res);
 }
 
-unsigned int TDraw::getColor(int a, int r, int g, int b) const {
-  unsigned int color = ((a << 24) & 0xff000000) | ((r << 16) & 0x00ff0000) |
-                       ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
-  return color;
-}
 
-unsigned int TDraw::getColor(int r, int g, int b) const {
-  unsigned int color = (0xff000000) | ((r << 16) & 0x00ff0000) |
-                       ((g << 8) & 0x0000ff00) | (b & 0x000000ff);
-  return color;
-}
-
-void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2, unsigned int *img,
-                          const TPoint &res) {
+void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2,
+                          std::vector<unsigned char> &img, const TPoint &res) {
 
   TPoint p{p1};
   TPoint q{p2};
@@ -59,18 +48,29 @@ void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2, unsigned int *img,
     q.y--;
 
   // Dibujamos punto inicial y final
-  if (isInImage(p, res))
-    img[res.x * p.y + p.x] = getColor(a, r, g, b);
+  if (isInImage(p, res)) {
+    img[4 * res.x * p.y + 4 * p.x + 0] = r;
+    img[4 * res.x * p.y + 4 * p.x + 1] = g;
+    img[4 * res.x * p.y + 4 * p.x + 2] = b;
+    img[4 * res.x * p.y + 4 * p.x + 3] = a;
+  }
 
-  if (isInImage(q, res))
-    img[res.x * q.y + q.x] = getColor(a, r, g, b);
-
+  if (isInImage(q, res)) {
+    img[4 * res.x * q.y + 4 * q.x + 0] = r;
+    img[4 * res.x * q.y + 4 * q.x + 1] = g;
+    img[4 * res.x * q.y + 4 * q.x + 2] = b;
+    img[4 * res.x * q.y + 4 * q.x + 3] = a;
+  }
   // Si es una línea horizontal
   if (p.y == q.y) {
 
     for (x = p.x; x <= q.x; x++)
-      if (isInImage(TPoint(x, p.y), res))
-        img[res.x * p.y + x] = getColor(a, r, g, b);
+      if (isInImage(TPoint(x, p.y), res)) {
+        img[4 * res.x * p.y + 4 * x + 0] = r;
+        img[4 * res.x * p.y + 4 * x + 1] = g;
+        img[4 * res.x * p.y + 4 * x + 2] = b;
+        img[4 * res.x * p.y + 4 * x + 3] = a;
+      }
     return;
   }
 
@@ -80,8 +80,12 @@ void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2, unsigned int *img,
     if (p.y > q.y)
       std::swap(p.y, q.y);
     for (y = p.y; y <= q.y; y++)
-      if (isInImage(TPoint(p.x, y), res))
-        img[res.x * y + q.x] = getColor(a, r, g, b);
+      if (isInImage(TPoint(p.x, y), res)) {
+        img[4 * res.x * y + 4 * q.x + 0] = r;
+        img[4 * res.x * y + 4 * q.x + 1] = g;
+        img[4 * res.x * y + 4 * q.x + 2] = b;
+        img[4 * res.x * y + 4 * q.x + 3] = a;
+      }
     return;
   }
 
@@ -143,8 +147,12 @@ void TDraw::bresenhamLine(const TPoint &p1, const TPoint &p2, unsigned int *img,
     // Sumamos el traslado inicial
     interpolated += initial;
     // Guardamos el punto en el framebuffer
-    if (isInImage(interpolated, res))
-      img[res.x * interpolated.y + interpolated.x] = getColor(a, r, g, b);
+    if (isInImage(interpolated, res)) {
+      img[4 * res.x * interpolated.y + 4 * interpolated.x + 0] = r;
+      img[4 * res.x * interpolated.y + 4 * interpolated.x + 1] = g;
+      img[4 * res.x * interpolated.y + 4 * interpolated.x + 2] = b;
+      img[4 * res.x * interpolated.y + 4 * interpolated.x + 3] = a;
+    }
   }
 }
 
@@ -156,7 +164,10 @@ void TDraw::explicitLine(const TPoint &p1, const TPoint &p2, int *img,
   for (int x = p1.x; x <= p2.x; x++) {
     y = static_cast<int>(std::round(m * x + k));
     if (isInImage(TPoint(x, y), res))
-      img[res.x * y + x] = getColor(a, r, g, b);
+      img[4 * res.x * y + 4 * x + 0 ] =  r;
+      img[4 * res.x * y + 4 * x + 1 ] =  g;
+      img[4 * res.x * y + 4 * x + 2 ] =  b;
+      img[4 * res.x * y + 4 * x + 3 ] =  a;
   }
 }
 
@@ -243,8 +254,8 @@ TDraw::Octant TDraw::toFirstOctant(TPoint &p1, TPoint &p2) {
   return octant;
 }
 
-void TDraw::wireframe(unsigned int *data, const TPoint &resolution,
-                      const TModel &model) {
+void TDraw::wireframe(std::vector<unsigned char> &data,
+                      const TPoint &resolution, const TModel &model) {
   TVector4D w0, w1, w2;
   for (auto face : model.faces_for_vertexes) {
     w0 = model.list_vertexes.at(face.v1 - 1);

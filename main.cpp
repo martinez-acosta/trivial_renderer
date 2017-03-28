@@ -1,3 +1,4 @@
+#include "tdraw.h"
 #include "timage.h"
 #include "tinput.h"
 #include "tmatrix4x4.h"
@@ -6,6 +7,7 @@
 int main(int argc, char *argv[]) {
   // Obtenemos datos de entrada
   TInput input;
+
   input.getInput(argc, argv);
 
   // Obtenemos información del modelo 3D
@@ -32,11 +34,10 @@ int main(int argc, char *argv[]) {
 
   // Creamos imagen
   TImage frame(input.resolution.x, input.resolution.y);
-  unsigned int *data = reinterpret_cast<unsigned int *>(frame.getData());
 
   // Dibujamos rasterizado wireframe
   TDraw draw;
-  draw.wireframe(data, input.resolution, model);
+  draw.wireframe(frame.getData(), input.resolution, model);
 
   // Salvamos imagen
   frame.save("salida.png");

@@ -27,8 +27,8 @@ TVector4D::TVector4D(const TPoint &p) : x(p.x), y(p.y), z(0.0f), w(0.0f) {}
 }
 
 TPoint TVector4D::toPoint() const {
-  return TPoint(static_cast<int>(std::round(x)),
-                static_cast<int>(std::round(y)));
+  return TPoint(static_cast<int>(round(x)),
+                static_cast<int>(round(y)));
 }
 
  float TVector4D::dotProduct(const TVector4D &v1,

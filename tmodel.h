@@ -1,6 +1,6 @@
 #ifndef TMODEL_H
 #define TMODEL_H
-#include "tdraw.h"
+#include "tmatrix4x4.h"
 #include "tvector4d.h"
 #include <string>
 #include <vector>

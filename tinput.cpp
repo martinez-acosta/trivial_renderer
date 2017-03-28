@@ -25,10 +25,10 @@ void TInput::getInput(int argc, char **argv) {
     error("Error from cmdline_parse() in getInput(int argc, char *argv[])");
 
   if (args_info.input_given)
-    std::string input = std::string{args_info.input_arg};
+    in_filename = std::string{args_info.input_arg};
 
   if (args_info.output_given)
-    std::string output = std::string{args_info.output_arg};
+    out_filename = std::string{args_info.output_arg};
 
   if (args_info.rotate_given || args_info.rotate_x_given ||
       args_info.rotate_y_given || args_info.rotate_z_given)

@@ -21,8 +21,8 @@ bool TVector3D::isCeroVector() const {
 }
 
 TPoint TVector3D::toPoint() const {
-        return TPoint(static_cast<int>(std::round(x)),
-                      static_cast<int>(std::round(y)));
+        return TPoint(static_cast<int>(round(x)),
+                      static_cast<int>(round(y)));
 }
 
 float TVector3D::dotProduct(const TVector3D &v1,
