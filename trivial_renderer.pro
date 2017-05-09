@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     timage.cpp \
     tdraw.cpp \
     lodepng.cpp \
-    cmdline.c
+    cmdline.c \
+    tshading.cpp
 
 HEADERS += \
     tvector4d.h \
@@ -24,4 +25,5 @@ HEADERS += \
     timage.h \
     tdraw.h \
     lodepng.h \
-    cmdline.h
+    cmdline.h \
+    tshading.h

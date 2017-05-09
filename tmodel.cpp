@@ -31,6 +31,11 @@ void TModel::readObjFile(const std::string &filename) {
       tmp = line.substr(2);
       getFace(tmp);
     }
+
+    if (line[0] == 'v' && line[1] == 'n') {
+      tmp = line.substr(2);
+      getNormal(tmp);
+    }
   }
   input.close();
 }
@@ -53,6 +58,19 @@ void TModel::getVertex(std::string &line) {
   list_vertexes.push_back(v);
 }
 
+void TModel::getNormal(std::string &line) {
+  std::vector<std::string> tmp(3);
+  TVector3D v;
+
+  boost::split(tmp, line, boost::is_any_of(" "));
+
+  v[0] = std::stof(tmp.at(1));
+  v[1] = std::stof(tmp.at(2));
+  v[2] = std::stof(tmp.at(3));
+
+  list_normals.push_back(v);
+}
+
 void TModel::getFace(std::string &line) {
   int vertex[3];
   int texture[3];
@@ -67,7 +85,8 @@ void TModel::getFace(std::string &line) {
   boost::split(white_space, line, boost::is_any_of(" "));
 
   for (std::size_t i = 0; i < white_space.size(); i++) {
-    // si no hay "//", puede haber vértice, texturas y normales
+    // si hay "//", puede haber vértices y normales
+    // en caso contrario, vértices, texturas y normales
     if (white_space.at(i).find("//") == std::string::npos) {
       boost::split(vertex_string, white_space.at(i), boost::is_any_of("/"));
       switch (vertex_string.size()) {
@@ -90,9 +109,18 @@ void TModel::getFace(std::string &line) {
       }
       vertex_string.clear();
     } else { // Solo hay vértices y normales
-      boost::split(vertex_string, white_space.at(i), boost::is_any_of("//"));
+      std::istringstream f(white_space.at(i));
+      std::string s;
+      std::getline(f, s, '/');
+      vertex[i] = std::stoi(s);
+      std::getline(f, s, '/');
+      std::getline(f, s, '/');
+      texture[i] = std::stoi(s);
+
+      /*boost::split(vertex_string, white_space.at(i), boost::is_any_of("//"));
       vertex[i] = std::stoi(vertex_string.at(0));
       texture[i] = std::stoi(vertex_string.at(1));
+      */
       there_is_normal = true;
     }
   }
@@ -133,6 +161,8 @@ void TModel::rotate(const TVector3D &vector) {
     m(3, 3) = 1.0f;
     for (auto &vertex : list_vertexes)
       vertex = vertex * m;
+    for (auto &normal : list_normals)
+      normal = normal * m;
   }
   // Rotación respecto a y
   if (vector.y != 0.0f) {
@@ -145,6 +175,8 @@ void TModel::rotate(const TVector3D &vector) {
     m(3, 3) = 1.0f;
     for (auto &vertex : list_vertexes)
       vertex = vertex * m;
+    for (auto &normal : list_normals)
+      normal = normal * m;
   }
 
   // Rotación respecto a z
@@ -158,6 +190,8 @@ void TModel::rotate(const TVector3D &vector) {
     m(3, 3) = 1.0f;
     for (auto &vertex : list_vertexes)
       vertex = vertex * m;
+    for (auto &normal : list_normals)
+      normal = normal * m;
   }
 }
 

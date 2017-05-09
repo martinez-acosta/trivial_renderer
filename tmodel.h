@@ -30,6 +30,7 @@ private:
 
   void getVertex(std::string &line);
   void getFace(std::string &line);
+  void getNormal(std::string &line);
   void readObjFile(const std::string &filename);
   void readRawFile(const std::string &filename);
 };

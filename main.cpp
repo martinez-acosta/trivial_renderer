@@ -4,6 +4,7 @@
 #include "tmatrix4x4.h"
 #include "tmodel.h"
 #include <iostream>
+
 int main(int argc, char *argv[]) {
   // Obtenemos datos de entrada
   TInput input;
@@ -37,8 +38,9 @@ int main(int argc, char *argv[]) {
 
   // Dibujamos rasterizado wireframe
   TDraw draw;
-  draw.wireframe(frame.getData(), input.resolution, model);
-
+  // draw.wireframe(frame.getData(), input.resolution, model);
+  // draw.interpolateTriangle(frame.getData(), input.resolution, model);
+  // draw.faceHiding(frame.getData(), input.resolution, model);
   // Salvamos imagen
-  frame.save("salida.png");
+  frame.save("salida2.png");
 }

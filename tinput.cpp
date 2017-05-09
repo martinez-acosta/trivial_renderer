@@ -50,9 +50,8 @@ void TInput::getInput(int argc, char **argv) {
 
 void TInput::getRotate() {
   std::string tmp;
-
+  rotate_given = true;
   if (args_info.rotate_given) {
-    rotate_given = true;
     tmp = std::string{args_info.rotate_arg};
     rotate_vector.x = toRad(stof(tmp));
     rotate_vector.y = toRad(stof(tmp));
