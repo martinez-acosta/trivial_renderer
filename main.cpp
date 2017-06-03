@@ -5,42 +5,48 @@
 #include "tmodel.h"
 #include <iostream>
 
+float toRad(float degree) { return degree * (M_PI / 180.0f); }
+
 int main(int argc, char *argv[]) {
   // Obtenemos datos de entrada
   TInput input;
 
-  input.getInput(argc, argv);
-
   // Obtenemos información del modelo 3D
-  TModel model(input.in_filename);
+  TModel model;
+
+  input.getInput(argc, argv, model);
+  model.getInfo(input.in_filename);
+  model.info.resolution = input.resolution;
 
   /* Realizamos transformaciones*/
   // Si hay rotación
   if (input.rotate_given)
     model.rotate(input.rotate_vector);
+  // model.rotate(TVector3D(toRad(0), toRad(20), 0));
 
   // Si hay multiplicación por escalar
   if (input.scale_given)
+    // model.scale(TVector3D(100, 100, 100));
     model.scale(input.scale_vector);
 
   // Si hay traslación
   if (input.translate_given)
-    model.translate(input.translate_vector);
+    model.translate(TVector3D(100, 100, -100));
 
   /* Rasterizamos el modelo 3D */
-
-  // Si hay viewport
-  if (input.viewport_given) {
-  }
 
   // Creamos imagen
   TImage frame(input.resolution.x, input.resolution.y);
 
   // Dibujamos rasterizado wireframe
   TDraw draw;
-  // draw.wireframe(frame.getData(), input.resolution, model);
-  // draw.interpolateTriangle(frame.getData(), input.resolution, model);
-  // draw.faceHiding(frame.getData(), input.resolution, model);
+  if (model.info.wireframe)
+    draw.wireframe(frame.getData(), input.resolution, model);
+  else if (model.info.faceHiding)
+    draw.faceHiding(frame.getData(), input.resolution, model);
+  else if (model.info.flatShading)
+    draw.zBuffer(frame.getData(), frame.getDepthBuffer(), input.resolution,
+                 model);
   // Salvamos imagen
   frame.save("salida2.png");
 }

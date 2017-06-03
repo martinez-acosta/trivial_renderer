@@ -21,12 +21,12 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_PACKAGE
 /** @brief the program name (used for printing errors) */
-#define CMDLINE_PARSER_PACKAGE "trivial_renderer"
+#define CMDLINE_PARSER_PACKAGE "renderer_t"
 #endif
 
 #ifndef CMDLINE_PARSER_PACKAGE_NAME
 /** @brief the complete program name (used for help and version) */
-#define CMDLINE_PARSER_PACKAGE_NAME "trivial_renderer"
+#define CMDLINE_PARSER_PACKAGE_NAME "renderer_t"
 #endif
 
 #ifndef CMDLINE_PARSER_VERSION
@@ -39,63 +39,103 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  char * input_arg;	/**< @brief Archivo a leer.  */
-  char * input_orig;	/**< @brief Archivo a leer original value given at command line.  */
-  const char *input_help; /**< @brief Archivo a leer help description.  */
-  char * output_arg;	/**< @brief Archivo de salida.  */
-  char * output_orig;	/**< @brief Archivo de salida original value given at command line.  */
-  const char *output_help; /**< @brief Archivo de salida help description.  */
-  char * resolution_arg;	/**< @brief Resolución de la imagen en la forma <x,y>.  */
-  char * resolution_orig;	/**< @brief Resolución de la imagen en la forma <x,y> original value given at command line.  */
-  const char *resolution_help; /**< @brief Resolución de la imagen en la forma <x,y> help description.  */
-  const char *raster_wireframe_help; /**< @brief Raster wireframe a hacer help description.  */
-  char * viewport_arg;	/**< @brief Rectángulo que acota al modelo 3D en la imagen(Esta opción desactiva scale y translate).  */
-  char * viewport_orig;	/**< @brief Rectángulo que acota al modelo 3D en la imagen(Esta opción desactiva scale y translate) original value given at command line.  */
-  const char *viewport_help; /**< @brief Rectángulo que acota al modelo 3D en la imagen(Esta opción desactiva scale y translate) help description.  */
-  char * rotate_arg;	/**< @brief Rotación con respecto al eje x,y,z en grados.  */
-  char * rotate_orig;	/**< @brief Rotación con respecto al eje x,y,z en grados original value given at command line.  */
-  const char *rotate_help; /**< @brief Rotación con respecto al eje x,y,z en grados help description.  */
+  char * input_arg;	/**< @brief archivo a leer.  */
+  char * input_orig;	/**< @brief archivo a leer original value given at command line.  */
+  const char *input_help; /**< @brief archivo a leer help description.  */
+  char * output_dir_arg;	/**< @brief directorio de salida.  */
+  char * output_dir_orig;	/**< @brief directorio de salida original value given at command line.  */
+  const char *output_dir_help; /**< @brief directorio de salida help description.  */
+  char * resolution_arg;	/**< @brief resolución de la imagen en la forma <x,y>.  */
+  char * resolution_orig;	/**< @brief resolución de la imagen en la forma <x,y> original value given at command line.  */
+  const char *resolution_help; /**< @brief resolución de la imagen en la forma <x,y> help description.  */
+  char * camera_arg;	/**< @brief coordenadas de la cámara <x,y,z>.  */
+  char * camera_orig;	/**< @brief coordenadas de la cámara <x,y,z> original value given at command line.  */
+  const char *camera_help; /**< @brief coordenadas de la cámara <x,y,z> help description.  */
+  char * angleOfView_arg;	/**< @brief angleOfView.  */
+  char * angleOfView_orig;	/**< @brief angleOfView original value given at command line.  */
+  const char *angleOfView_help; /**< @brief angleOfView help description.  */
+  char * near_arg;	/**< @brief plano cercano.  */
+  char * near_orig;	/**< @brief plano cercano original value given at command line.  */
+  const char *near_help; /**< @brief plano cercano help description.  */
+  char * far_arg;	/**< @brief plano lejano.  */
+  char * far_orig;	/**< @brief plano lejano original value given at command line.  */
+  const char *far_help; /**< @brief plano lejano help description.  */
+  char * rotate_arg;	/**< @brief Rotación x,y,z.  */
+  char * rotate_orig;	/**< @brief Rotación x,y,z original value given at command line.  */
+  const char *rotate_help; /**< @brief Rotación x,y,z help description.  */
   char * scale_arg;	/**< @brief Escalar la figura en x,y,z.  */
   char * scale_orig;	/**< @brief Escalar la figura en x,y,z original value given at command line.  */
   const char *scale_help; /**< @brief Escalar la figura en x,y,z help description.  */
-  char * translate_arg;	/**< @brief Trasladar a un punto (x,y,z).  */
-  char * translate_orig;	/**< @brief Trasladar a un punto (x,y,z) original value given at command line.  */
-  const char *translate_help; /**< @brief Trasladar a un punto (x,y,z) help description.  */
-  char * rotate_x_arg;	/**< @brief Rotación con respecto al eje x en grados.  */
-  char * rotate_x_orig;	/**< @brief Rotación con respecto al eje x en grados original value given at command line.  */
-  const char *rotate_x_help; /**< @brief Rotación con respecto al eje x en grados help description.  */
-  char * rotate_y_arg;	/**< @brief Rotación con respecto al eje y en grados.  */
-  char * rotate_y_orig;	/**< @brief Rotación con respecto al eje y en grados original value given at command line.  */
-  const char *rotate_y_help; /**< @brief Rotación con respecto al eje y en grados help description.  */
-  char * rotate_z_arg;	/**< @brief Rotación con respecto al eje z en grados.  */
-  char * rotate_z_orig;	/**< @brief Rotación con respecto al eje z en grados original value given at command line.  */
-  const char *rotate_z_help; /**< @brief Rotación con respecto al eje z en grados help description.  */
-  char * scale_x_arg;	/**< @brief Escalar la figura en x.  */
-  char * scale_x_orig;	/**< @brief Escalar la figura en x original value given at command line.  */
-  const char *scale_x_help; /**< @brief Escalar la figura en x help description.  */
-  char * scale_y_arg;	/**< @brief Escalar la figura en y.  */
-  char * scale_y_orig;	/**< @brief Escalar la figura en y original value given at command line.  */
-  const char *scale_y_help; /**< @brief Escalar la figura en y help description.  */
-  char * scale_z_arg;	/**< @brief Escalar la figura en z.  */
-  char * scale_z_orig;	/**< @brief Escalar la figura en z original value given at command line.  */
-  const char *scale_z_help; /**< @brief Escalar la figura en z help description.  */
+  char * scale_x_arg;	/**< @brief Escala en x.  */
+  char * scale_x_orig;	/**< @brief Escala en x original value given at command line.  */
+  const char *scale_x_help; /**< @brief Escala en x help description.  */
+  char * scale_y_arg;	/**< @brief Escala en y.  */
+  char * scale_y_orig;	/**< @brief Escala en y original value given at command line.  */
+  const char *scale_y_help; /**< @brief Escala en y help description.  */
+  char * scale_z_arg;	/**< @brief Escala en z.  */
+  char * scale_z_orig;	/**< @brief Escala en z original value given at command line.  */
+  const char *scale_z_help; /**< @brief Escala en z help description.  */
+  const char *wireframe_help; /**< @brief activa el renderizado wireframe help description.  */
+  const char *faceHiding_help; /**< @brief activa el ocultamiento de caras help description.  */
+  const char *flatShading_help; /**< @brief activa el renderizado con flatShading help description.  */
+  char * bezier_curve_arg;	/**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4.  */
+  char * bezier_curve_orig;	/**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4 original value given at command line.  */
+  const char *bezier_curve_help; /**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4 help description.  */
+  char * hermite_curve_arg;	/**< @brief curva de hermite a seguir con dos puntos de control en la forma p1,p2.  */
+  char * hermite_curve_orig;	/**< @brief curva de hermite a seguir con dos puntos de control en la forma p1,p2 original value given at command line.  */
+  const char *hermite_curve_help; /**< @brief curva de hermite a seguir con dos puntos de control en la forma p1,p2 help description.  */
+  char * bezier_surface_arg;	/**< @brief archivo de superficie de bézier con los 16 puntos.  */
+  char * bezier_surface_orig;	/**< @brief archivo de superficie de bézier con los 16 puntos original value given at command line.  */
+  const char *bezier_surface_help; /**< @brief archivo de superficie de bézier con los 16 puntos help description.  */
+  char * hermite_surface_arg;	/**< @brief archivo de superficie de hermite con los 16 puntos.  */
+  char * hermite_surface_orig;	/**< @brief archivo de superficie de hermite con los 16 puntos original value given at command line.  */
+  const char *hermite_surface_help; /**< @brief archivo de superficie de hermite con los 16 puntos help description.  */
+  char * line_arg;	/**< @brief línea a seguir, dos puntos: p1,p2.  */
+  char * line_orig;	/**< @brief línea a seguir, dos puntos: p1,p2 original value given at command line.  */
+  const char *line_help; /**< @brief línea a seguir, dos puntos: p1,p2 help description.  */
+  char * specular_arg;	/**< @brief activa la iluminación especular.  */
+  char * specular_orig;	/**< @brief activa la iluminación especular original value given at command line.  */
+  const char *specular_help; /**< @brief activa la iluminación especular help description.  */
+  char * ambient_arg;	/**< @brief activa la iluminación de ambiente.  */
+  char * ambient_orig;	/**< @brief activa la iluminación de ambiente original value given at command line.  */
+  const char *ambient_help; /**< @brief activa la iluminación de ambiente help description.  */
+  char * diffuse_arg;	/**< @brief activa la iluminación difusa.  */
+  char * diffuse_orig;	/**< @brief activa la iluminación difusa original value given at command line.  */
+  const char *diffuse_help; /**< @brief activa la iluminación difusa help description.  */
+  char * phong_arg;	/**< @brief modelo de iluminación de Phong.  */
+  char * phong_orig;	/**< @brief modelo de iluminación de Phong original value given at command line.  */
+  const char *phong_help; /**< @brief modelo de iluminación de Phong help description.  */
+  char * gourand_arg;	/**< @brief modelo de iluminación de Gourand.  */
+  char * gourand_orig;	/**< @brief modelo de iluminación de Gourand original value given at command line.  */
+  const char *gourand_help; /**< @brief modelo de iluminación de Gourand help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int input_given ;	/**< @brief Whether input was given.  */
-  unsigned int output_given ;	/**< @brief Whether output was given.  */
+  unsigned int output_dir_given ;	/**< @brief Whether output_dir was given.  */
   unsigned int resolution_given ;	/**< @brief Whether resolution was given.  */
-  unsigned int raster_wireframe_given ;	/**< @brief Whether raster-wireframe was given.  */
-  unsigned int viewport_given ;	/**< @brief Whether viewport was given.  */
+  unsigned int camera_given ;	/**< @brief Whether camera was given.  */
+  unsigned int angleOfView_given ;	/**< @brief Whether angleOfView was given.  */
+  unsigned int near_given ;	/**< @brief Whether near was given.  */
+  unsigned int far_given ;	/**< @brief Whether far was given.  */
   unsigned int rotate_given ;	/**< @brief Whether rotate was given.  */
   unsigned int scale_given ;	/**< @brief Whether scale was given.  */
-  unsigned int translate_given ;	/**< @brief Whether translate was given.  */
-  unsigned int rotate_x_given ;	/**< @brief Whether rotate-x was given.  */
-  unsigned int rotate_y_given ;	/**< @brief Whether rotate-y was given.  */
-  unsigned int rotate_z_given ;	/**< @brief Whether rotate-z was given.  */
   unsigned int scale_x_given ;	/**< @brief Whether scale-x was given.  */
   unsigned int scale_y_given ;	/**< @brief Whether scale-y was given.  */
   unsigned int scale_z_given ;	/**< @brief Whether scale-z was given.  */
+  unsigned int wireframe_given ;	/**< @brief Whether wireframe was given.  */
+  unsigned int faceHiding_given ;	/**< @brief Whether faceHiding was given.  */
+  unsigned int flatShading_given ;	/**< @brief Whether flatShading was given.  */
+  unsigned int bezier_curve_given ;	/**< @brief Whether bezier-curve was given.  */
+  unsigned int hermite_curve_given ;	/**< @brief Whether hermite-curve was given.  */
+  unsigned int bezier_surface_given ;	/**< @brief Whether bezier-surface was given.  */
+  unsigned int hermite_surface_given ;	/**< @brief Whether hermite-surface was given.  */
+  unsigned int line_given ;	/**< @brief Whether line was given.  */
+  unsigned int specular_given ;	/**< @brief Whether specular was given.  */
+  unsigned int ambient_given ;	/**< @brief Whether ambient was given.  */
+  unsigned int diffuse_given ;	/**< @brief Whether diffuse was given.  */
+  unsigned int phong_given ;	/**< @brief Whether phong was given.  */
+  unsigned int gourand_given ;	/**< @brief Whether gourand was given.  */
 
 } ;
 

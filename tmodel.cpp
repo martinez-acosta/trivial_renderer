@@ -4,9 +4,65 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+void TModel::setPerspective() {
+  float scale = tan(info.cam.angleOfView * 0.5 * M_PI / 180) * info.cam.near;
+  info.cam.right = ((float)1920 / (float)1080) * scale,
+  info.cam.left = -info.cam.right;
+  info.cam.top = scale, info.cam.bottom = -info.cam.top;
+}
 
-TModel::TModel(const std::string &filename) {
-  name = filename;
+void TModel::setFrustum(TMatrix4x4 &MProj) {
+  float n, f, r, b, l, t;
+
+  n = info.cam.near;
+  f = info.cam.far;
+
+  r = info.cam.right;
+  l = info.cam.left;
+
+  t = info.cam.top;
+  b = info.cam.bottom;
+
+  // Asignamos la matrix de proyección
+  MProj(0, 0) = 2 * n / (r - l);
+  MProj(0, 1) = 0;
+  MProj(0, 2) = 0;
+  MProj(0, 3) = 0;
+
+  MProj(1, 0) = 0;
+  MProj(1, 1) = 2 * n / (t - b);
+  MProj(1, 2) = 0;
+  MProj(1, 3) = 0;
+
+  MProj(2, 0) = (r + l) / (r - l);
+  MProj(2, 1) = (t + b) / (t - b);
+  MProj(2, 2) = -(f + n) / (f - n);
+  MProj(2, 3) = -1;
+
+  MProj(3, 0) = 0;
+  MProj(3, 1) = 0;
+  MProj(3, 2) = -2 * f * n / (f - n);
+  MProj(3, 3) = 0;
+}
+TModel::TModel() {
+  // name = filename;
+  info.wireframe = false;
+  info.faceHiding = false;
+  info.flatShading = false;
+
+  info.lightAmbient = false;
+  info.lightDiffuse = false;
+  info.lightSpecular = false;
+
+  info.phong = false;
+  info.gourand = false;
+
+  info.bezierCurve = false;
+  info.hermiteCurve = false;
+  info.bezierSurface = false;
+  info.hermiteSurface = false;
+}
+void TModel::getInfo(const std::string &name) {
   if (name.find(".obj") != std::string::npos)
     readObjFile(name);
 
@@ -128,6 +184,7 @@ void TModel::getFace(std::string &line) {
   face_vertex.v1 = vertex[0];
   face_vertex.v2 = vertex[1];
   face_vertex.v3 = vertex[2];
+  face_vertex.n_faces = 3; // arreglar
 
   if (there_is_texture) {
     face_texture.v1 = texture[0];

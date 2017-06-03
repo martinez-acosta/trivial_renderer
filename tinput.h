@@ -1,6 +1,7 @@
 #ifndef TINPUT_H
 #define TINPUT_H
 #include "cmdline.h"
+#include "tmodel.h"
 #include "tvector4d.h"
 #include <boost/math/constants/constants.hpp>
 #include <iostream>
@@ -12,7 +13,7 @@ struct viewport {
 class TInput {
 public:
   TInput();
-  void getInput(int argc, char **argv);
+  void getInput(int argc, char **argv, TModel &model);
   std::string in_filename;
   std::string out_filename;
   TPoint resolution;

@@ -14,12 +14,13 @@ TInput::TInput() {
   translate_given = false;
   viewport_given = false;
   rasterWireframe = false;
+
   rotate_vector = TVector3D(0.0f, 0.0f, 0.0f);
   scale_vector = TVector3D(0.0f, 0.0f, 0.0f);
   translate_vector = TVector3D(0.0f, 0.0f, 0.0f);
 }
 
-void TInput::getInput(int argc, char **argv) {
+void TInput::getInput(int argc, char **argv, TModel &model) {
 
   if (cmdline_parser(argc, argv, &args_info))
     error("Error from cmdline_parse() in getInput(int argc, char *argv[])");
@@ -27,54 +28,104 @@ void TInput::getInput(int argc, char **argv) {
   if (args_info.input_given)
     in_filename = std::string{args_info.input_arg};
 
-  if (args_info.output_given)
-    out_filename = std::string{args_info.output_arg};
-
-  if (args_info.rotate_given || args_info.rotate_x_given ||
-      args_info.rotate_y_given || args_info.rotate_z_given)
+  if (args_info.rotate_given)
     getRotate();
 
   if (args_info.scale_given || args_info.scale_x_given ||
       args_info.scale_y_given || args_info.scale_z_given)
     getScale();
 
-  if (args_info.translate_given)
-    getTranslate();
-
-  if (args_info.viewport_given)
-    getViewport();
-
   if (args_info.resolution_given)
     getResolution();
+  // Obtenemos datos
+  if (args_info.wireframe_given)
+    model.info.wireframe = true;
+
+  if (args_info.faceHiding_given)
+    model.info.faceHiding = true;
+
+  if (args_info.flatShading_given)
+    model.info.flatShading = true;
+
+  if (args_info.ambient_given)
+    model.info.lightAmbient = true;
+
+  if (args_info.diffuse_given)
+    model.info.lightDiffuse = true;
+
+  if (args_info.specular_given)
+    model.info.lightSpecular = true;
+
+  if (args_info.phong_given)
+    model.info.phong = true;
+
+  if (args_info.gourand_given)
+    model.info.gourand = true;
+
+  if (args_info.bezier_curve_given)
+    model.info.bezierCurve = true;
+
+  if (args_info.hermite_curve_given)
+    model.info.hermiteCurve = true;
+
+  if (args_info.bezier_surface_given)
+    model.info.bezierSurface = true;
+
+  if (args_info.hermite_surface_given)
+    model.info.hermiteSurface = true;
+
+  // Cámara
+
+  if (args_info.angleOfView_given) {
+    model.info.cam.angleOfView = std::stoi(args_info.angleOfView_arg);
+    model.info.cam.aspectRatio = resolution.x / (float)resolution.y;
+    if (args_info.near_given && args_info.far_given) {
+      model.info.cam.near = std::stof(args_info.near_arg);
+      model.info.cam.far = std::stof(args_info.far_arg);
+    }
+  }
+
+  // Segmento de línea
+  if (args_info.line_given) {
+    char *tmp;
+
+    tmp = strtok(args_info.line_arg, ",");
+    model.info.line.p0.x = strtol(tmp, (char **)NULL, 10);
+    model.info.line.p0.y = strtol(strtok(NULL, ","), (char **)NULL, 10);
+    model.info.line.p1.x = strtol(strtok(NULL, ","), (char **)NULL, 10);
+    model.info.line.p1.y = strtol(strtok(NULL, "\n\r\v\f"), (char **)NULL, 10);
+  }
+  if (args_info.camera_given) {
+    char a;
+    sscanf(args_info.camera_arg, "%f%c%f%c%f", &model.info.cam.pos.x, &a,
+           &model.info.cam.pos.y, &a, &model.info.cam.pos.z);
+  }
+  // Curvas
+  char a;
+  if (args_info.bezier_curve_given) {
+    sscanf(args_info.bezier_curve_arg, "%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f",
+           &model.info.cbezier.p0.x, &a, &model.info.cbezier.p0.y, &a,
+           &model.info.cbezier.p1.x, &a, &model.info.cbezier.p1.x, &a,
+           &model.info.cbezier.p2.x, &a, &model.info.cbezier.p2.y, &a,
+           &model.info.cbezier.p3.x, &a, &model.info.cbezier.p3.y);
+  }
+  if (args_info.hermite_curve_given) {
+    sscanf(args_info.hermite_curve_arg, "%f%c%f%c%f%c%f%",
+           &model.info.chermite.p0.x, &a, &model.info.chermite.p0.y, &a,
+           &model.info.chermite.p1.x, &a, &model.info.chermite.p1.x);
+  }
 }
 
 void TInput::getRotate() {
-  std::string tmp;
   rotate_given = true;
-  if (args_info.rotate_given) {
-    tmp = std::string{args_info.rotate_arg};
-    rotate_vector.x = toRad(stof(tmp));
-    rotate_vector.y = toRad(stof(tmp));
-    rotate_vector.z = toRad(stof(tmp));
-  }
-
-  if (args_info.rotate_x_given) {
-
-    tmp = std::string{args_info.rotate_x_arg};
-    rotate_vector.x = toRad(stof(tmp));
-  }
-
-  if (args_info.rotate_y_given) {
-
-    tmp = std::string{args_info.rotate_y_arg};
-    rotate_vector.y = toRad(stof(tmp));
-  }
-
-  if (args_info.rotate_z_given) {
-    tmp = std::string{args_info.rotate_z_arg};
-    rotate_vector.z = toRad(stof(tmp));
-  }
+  char a;
+  sscanf(args_info.rotate_arg, "%f%c%f%c%f", &rotate_vector.x, &a,
+         &rotate_vector.y, &a, &rotate_vector.z);
+  rotate_vector.x = toRad(rotate_vector.x);
+  rotate_vector.y = toRad(rotate_vector.y);
+  rotate_vector.z = toRad(rotate_vector.z);
 }
+
 void TInput::getScale() {
   std::string tmp;
   float m;
@@ -111,8 +162,8 @@ void TInput::getTranslate() {
   translate_given = true;
 
   std::vector<std::string> strs;
-  std::string tmp{args_info.translate_arg};
-  boost::split(strs, tmp, boost::is_any_of(","));
+  // std::string tmp{args_info.translate_arg};
+  /*boost::split(strs, tmp, boost::is_any_of(","));
 
   switch (strs.size()) {
   case 1:
@@ -126,21 +177,21 @@ void TInput::getTranslate() {
     translate_vector = TVector3D(std::stof(strs.at(0)), std::stof(strs.at(1)),
                                  std::stof(strs.at(2)));
     break;
-  }
+  }*/
 }
 
 void TInput::getViewport() {
-  viewport_given = true;
+  /*viewport_given = true;
 
   std::vector<std::string> str_vector;
-  std::string tmp{args_info.viewport_arg};
+  // std::string tmp{args_info.viewport_arg};
 
   boost::split(str_vector, tmp, boost::is_any_of(","));
 
   if (str_vector.size() == 4) {
     view.p1 = TPoint(std::stoi(str_vector.at(0)), std::stoi(str_vector.at(1)));
     view.p2 = TPoint(std::stoi(str_vector.at(2)), std::stoi(str_vector.at(3)));
-  }
+  }*/
 }
 
 void TInput::getResolution() {

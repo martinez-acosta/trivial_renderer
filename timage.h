@@ -10,12 +10,14 @@ public:
   inline int getHeight() const { return height; }
   inline std::string getName() const { return name; }
   inline std::vector<unsigned char> &getData() { return data; }
+  inline std::vector<float> &getDepthBuffer() { return depthBuffer; }
   void save(const std::string &filename);
 
 private:
   int width;
   int height;
   std::vector<unsigned char> data;
+  std::vector<float> depthBuffer;
   std::string name;
 };
 

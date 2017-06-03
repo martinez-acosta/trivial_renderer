@@ -308,6 +308,7 @@ inline TVector4D operator*(const TVector4D &vector, const TMatrix4x4 &matrix) {
       vector.z * matrix.m[2][2] + vector.w * matrix.m[2][3];
   w = vector.x * matrix.m[3][0] + vector.y * matrix.m[3][1] +
       vector.z * matrix.m[3][2] + vector.w * matrix.m[3][3];
+
   return TVector4D(x, y, z, w);
 }
 
@@ -321,6 +322,7 @@ inline TVector4D operator*(const TMatrix4x4 &matrix, const TVector4D &vector) {
       vector.z * matrix.m[2][2] + vector.w * matrix.m[3][2];
   w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] +
       vector.z * matrix.m[2][3] + vector.w * matrix.m[3][3];
+
   return TVector4D(x, y, z, w);
 }
 
