@@ -44,9 +44,16 @@ int main(int argc, char *argv[]) {
     draw.wireframe(frame.getData(), input.resolution, model);
   else if (model.info.faceHiding)
     draw.faceHiding(frame.getData(), input.resolution, model);
-  else if (model.info.flatShading)
+  else if (model.info.zBuffer)
     draw.zBuffer(frame.getData(), frame.getDepthBuffer(), input.resolution,
                  model);
+  else if (model.info.flatShading)
+    draw.flatShading(frame.getData(), frame.getDepthBuffer(), input.resolution,
+                     model);
+  else if (model.info.gourand)
+    draw.gourandShading(frame.getData(), frame.getDepthBuffer(),
+                        input.resolution, model);
+
   // Salvamos imagen
   frame.save("salida2.png");
 }

@@ -1,7 +1,7 @@
 #include "tdraw.h"
 #include <algorithm>
 #include <cmath>
-TDraw::TDraw() : a(255), r(0), g(0), b(0), x(0), y(0) {}
+TDraw::TDraw() : a(255), r(255), g(255), b(255), x(0), y(0) {}
 
 bool TDraw::isInImage(const TPoint &p, const TPoint &resolution) const {
   return p.x >= 0 && p.x < resolution.x && p.y >= 0 && p.y < resolution.y;
@@ -267,6 +267,371 @@ void homogeneusDivide(TVector4D &v) {
     v.z /= v.w;
   }
 }
+void TDraw::flatShading(std::vector<unsigned char> &data,
+                        std::vector<float> &depthBuffer,
+                        const TPoint &resolution, TModel &model) {
+  TVector4D w0, w1, w2, w3;
+  TVector3D n0, n1, n2;
+  TVector4D camVector0, camVector1, camVector2, camVector3;
+  // Matriz de cambio de base: Espacio global a espacio de cámara
+  TMatrix4x4 MworldToCam;
+  TMatrix4x4 MProj;
+  TPoint p0, p1, p2, p3;
+  float aspectRatio = model.info.cam.aspectRatio;
+  MworldToCam.fill(0);
+  MProj.fill(0);
+  // Asignamos cámara
+  MProj(0, 0) = 1;
+  MProj(1, 1) = 1;
+  MProj(2, 2) = 1;
+  MProj(3, 3) = 1;
+
+  MworldToCam(0, 0) = 1;
+  MworldToCam(1, 1) = 1;
+  MworldToCam(2, 2) = 1;
+  MworldToCam(3, 3) = 1;
+  MworldToCam(0, 3) = model.info.cam.pos.x;
+  MworldToCam(1, 3) = model.info.cam.pos.y;
+  MworldToCam(2, 3) = model.info.cam.pos.z;
+
+  // Asignamos perspectiva y frustum
+  model.setPerspective();
+  model.setFrustum(MProj);
+  // Inicializamos el z buffer
+  for (unsigned y = 0; y < resolution.y; y++)
+    for (unsigned x = 0; x < resolution.x; x++) {
+      depthBuffer[resolution.x * y + x] = model.info.cam.far;
+    }
+
+  TVector3D tmp3D, view = {0, -10, -20}, normal, v1, v2;
+  TVector4D tmp4D;
+  TVector3D light_dir = model.info.luces.flatShading.pos;
+  TVector3D color = model.info.luces.flatShading.color;
+  float res;
+  for (auto face : model.faces_for_vertexes) {
+
+    w0 = model.list_vertexes.at(face.v1 - 1);
+    w1 = model.list_vertexes.at(face.v2 - 1);
+    w2 = model.list_vertexes.at(face.v3 - 1);
+    if (face.n_faces == 4)
+      w3 = model.list_vertexes.at(face.v4 - 1);
+
+    tmp3D = model.list_normals.at(face.v1 - 1);
+    n0 = {tmp3D.x, tmp3D.y, tmp3D.z};
+    tmp3D = model.list_normals.at(face.v2 - 1);
+    n1 = {tmp3D.x, tmp3D.y, tmp3D.z};
+    tmp3D = model.list_normals.at(face.v3 - 1);
+    n2 = {tmp3D.x, tmp3D.y, tmp3D.z};
+
+    // Cambio de base: Global a espacio de la cámara
+
+    camVector0 = w0 * MworldToCam;
+    camVector1 = w1 * MworldToCam;
+    camVector2 = w2 * MworldToCam;
+
+    homogeneusDivide(camVector0);
+    homogeneusDivide(camVector1);
+    homogeneusDivide(camVector2);
+
+    // multPointMatrix(w0, camVector0, MworldToCam);
+    if (face.n_faces == 4)
+      camVector3 = w3 * MworldToCam;
+
+    // Proyección en perspectiva
+    w0 = camVector0 * MProj;
+    w1 = camVector1 * MProj;
+    w2 = camVector2 * MProj;
+
+    homogeneusDivide(w0);
+    homogeneusDivide(w1);
+    homogeneusDivide(w2);
+
+    if (face.n_faces == 4) {
+      w3 = camVector3 * MProj;
+    }
+    // Comprobamos que cada punto esté dentro del cubo unitario
+    if (w0.x < -aspectRatio || w0.x > aspectRatio || w0.y < -1 || w0.y > 1)
+      continue;
+    if (w1.x < -aspectRatio || w1.x > aspectRatio || w1.y < -1 || w1.y > 1)
+      continue;
+    if (w2.x < -aspectRatio || w2.x > aspectRatio || w2.y < -1 || w2.y > 1)
+      continue;
+    if (face.n_faces == 4)
+      if (w3.x < -aspectRatio || w3.x > aspectRatio || w3.y < -1 || w3.y > 1)
+        continue;
+
+    tmp4D.x = w0.x - view.x;
+    tmp4D.y = w0.y - view.y;
+    tmp4D.z = w0.z - view.z;
+
+    v1.x = w1.x - w0.x;
+    v1.y = w1.y - w0.y;
+    v1.z = w1.z - w0.z;
+
+    v2.x = w2.x - w0.x;
+    v2.y = w2.y - w0.y;
+    v2.z = w2.z - w0.z;
+    normal = normal.crossProduct(v1, v2);
+    tmp3D = {tmp4D.x, tmp4D.y, tmp4D.z};
+    res = tmp3D.dotProduct(normal, view);
+
+    if (res >= 0) {
+      TVector4D q0{w0};
+      TVector4D q1{w1};
+      TVector4D q2{w2};
+      TVector4D p;
+
+      const TVector3D c0 = {1, 0, 0};
+      const TVector3D c1 = {0, 1, 0};
+      const TVector3D c2 = {0, 0, 1};
+      TPoint min, max;
+
+      // Cambiamos a espacio de raster
+      q0.x = std::min((u_int32_t)resolution.x - 1,
+                      (u_int32_t)((q0.x + 1) * 0.5 * resolution.x));
+      q0.y = std::min((u_int32_t)resolution.y - 1,
+                      (u_int32_t)((1 - (q0.y + 1) * 0.5) * resolution.y));
+
+      q1.x = std::min((u_int32_t)resolution.x - 1,
+                      (u_int32_t)((q1.x + 1) * 0.5 * resolution.x));
+      q1.y = std::min((u_int32_t)resolution.y - 1,
+                      (u_int32_t)((1 - (q1.y + 1) * 0.5) * resolution.y));
+
+      q2.x = std::min((u_int32_t)resolution.x - 1,
+                      (u_int32_t)((q2.x + 1) * 0.5 * resolution.x));
+      q2.y = std::min((u_int32_t)resolution.y - 1,
+                      (u_int32_t)((1 - (q2.y + 1) * 0.5) * resolution.y));
+
+      // Calculamos coordenadas que acotan al triángulo
+      min.x = static_cast<int>(std::min({q0.x, q1.x, q2.x}));
+      min.y = static_cast<int>(std::min({q0.y, q1.y, q2.y}));
+      max.x = static_cast<int>(std::max({q0.x, q1.x, q2.x}));
+      max.y = static_cast<int>(std::max({q0.y, q1.y, q2.y}));
+
+      float r0, g0, b0;
+      float area = areaTriangle(q0, q1, q2);
+      float a0, a1, a2;
+
+      for (int y = min.y; y < max.y; y++)
+        for (int x = min.x; x < max.x; x++) {
+          p = {static_cast<float>(x), static_cast<float>(y), 0};
+          a0 = areaTriangle(q1, q2, p);
+          a1 = areaTriangle(q2, q0, p);
+          a2 = areaTriangle(q0, q1, p);
+          a0 /= area;
+          a1 /= area;
+          a2 /= area;
+          if (a0 >= 0 && a1 >= 0 && a2 >= 0) {
+
+            r0 = a0 * c0[0] + a1 * c1[0] + a2 * c2[0];
+            g0 = a0 * c0[1] + a1 * c1[1] + a2 * c2[1];
+            b0 = a0 * c0[2] + a1 * c1[2] + a2 * c2[2];
+
+            float oneOverZ = q0.z * a0 + q1.z * a1 + q2.z * a2;
+            float z = 1 / oneOverZ;
+            if (z < depthBuffer[y * resolution.x + x]) {
+              depthBuffer[y * resolution.x + x] = z;
+
+              float intensity =
+                  normal.dotProduct(normal.normalize(), light_dir);
+              if (isInImage(TPoint(x, y), resolution)) {
+                data[4 * resolution.x * y + 4 * x + 0] =
+                    intensity * 255 * color.x;
+                data[4 * resolution.x * y + 4 * x + 1] =
+                    intensity * 255 * color.y;
+                data[4 * resolution.x * y + 4 * x + 2] =
+                    intensity * 255 * color.z;
+                data[4 * resolution.x * y + 4 * x + 3] = a;
+              }
+            }
+          }
+        }
+    }
+  }
+}
+void TDraw::gourandShading(std::vector<unsigned char> &data,
+                           std::vector<float> &depthBuffer,
+                           const TPoint &resolution, TModel &model) {
+  TVector4D w0, w1, w2, w3;
+  TVector3D n0, n1, n2;
+  TVector4D camVector0, camVector1, camVector2, camVector3;
+  // Matriz de cambio de base: Espacio global a espacio de cámara
+  TMatrix4x4 MworldToCam;
+  TMatrix4x4 MProj;
+  TPoint p0, p1, p2, p3;
+  float aspectRatio = model.info.cam.aspectRatio;
+  MworldToCam.fill(0);
+  MProj.fill(0);
+  // Asignamos cámara
+  MProj(0, 0) = 1;
+  MProj(1, 1) = 1;
+  MProj(2, 2) = 1;
+  MProj(3, 3) = 1;
+
+  MworldToCam(0, 0) = 1;
+  MworldToCam(1, 1) = 1;
+  MworldToCam(2, 2) = 1;
+  MworldToCam(3, 3) = 1;
+  MworldToCam(0, 3) = model.info.cam.pos.x;
+  MworldToCam(1, 3) = model.info.cam.pos.y;
+  MworldToCam(2, 3) = model.info.cam.pos.z;
+
+  // Asignamos perspectiva y frustum
+  model.setPerspective();
+  model.setFrustum(MProj);
+  // Inicializamos el z buffer
+  for (unsigned y = 0; y < resolution.y; y++)
+    for (unsigned x = 0; x < resolution.x; x++) {
+      depthBuffer[resolution.x * y + x] = model.info.cam.far;
+    }
+
+  TVector3D tmp3D, view = {0, -10, -20}, normal, v1, v2;
+  TVector4D tmp4D;
+  TVector3D light_dir = model.info.luces.gourand.pos;
+  TVector3D color = model.info.luces.gourand.color;
+  float res;
+  for (auto face : model.faces_for_vertexes) {
+
+    w0 = model.list_vertexes.at(face.v1 - 1);
+    w1 = model.list_vertexes.at(face.v2 - 1);
+    w2 = model.list_vertexes.at(face.v3 - 1);
+    if (face.n_faces == 4)
+      w3 = model.list_vertexes.at(face.v4 - 1);
+
+    tmp3D = model.list_normals.at(face.v1 - 1);
+    n0 = {tmp3D.x, tmp3D.y, tmp3D.z};
+    tmp3D = model.list_normals.at(face.v2 - 1);
+    n1 = {tmp3D.x, tmp3D.y, tmp3D.z};
+    tmp3D = model.list_normals.at(face.v3 - 1);
+    n2 = {tmp3D.x, tmp3D.y, tmp3D.z};
+
+    // Cambio de base: Global a espacio de la cámara
+
+    camVector0 = w0 * MworldToCam;
+    camVector1 = w1 * MworldToCam;
+    camVector2 = w2 * MworldToCam;
+
+    homogeneusDivide(camVector0);
+    homogeneusDivide(camVector1);
+    homogeneusDivide(camVector2);
+
+    // multPointMatrix(w0, camVector0, MworldToCam);
+    if (face.n_faces == 4)
+      camVector3 = w3 * MworldToCam;
+
+    // Proyección en perspectiva
+    w0 = camVector0 * MProj;
+    w1 = camVector1 * MProj;
+    w2 = camVector2 * MProj;
+
+    homogeneusDivide(w0);
+    homogeneusDivide(w1);
+    homogeneusDivide(w2);
+
+    if (face.n_faces == 4) {
+      w3 = camVector3 * MProj;
+    }
+    // Comprobamos que cada punto esté dentro del cubo unitario
+    if (w0.x < -aspectRatio || w0.x > aspectRatio || w0.y < -1 || w0.y > 1)
+      continue;
+    if (w1.x < -aspectRatio || w1.x > aspectRatio || w1.y < -1 || w1.y > 1)
+      continue;
+    if (w2.x < -aspectRatio || w2.x > aspectRatio || w2.y < -1 || w2.y > 1)
+      continue;
+    if (face.n_faces == 4)
+      if (w3.x < -aspectRatio || w3.x > aspectRatio || w3.y < -1 || w3.y > 1)
+        continue;
+
+    tmp4D.x = w0.x - view.x;
+    tmp4D.y = w0.y - view.y;
+    tmp4D.z = w0.z - view.z;
+
+    v1.x = w1.x - w0.x;
+    v1.y = w1.y - w0.y;
+    v1.z = w1.z - w0.z;
+
+    v2.x = w2.x - w0.x;
+    v2.y = w2.y - w0.y;
+    v2.z = w2.z - w0.z;
+    normal = normal.crossProduct(v1, v2);
+    tmp3D = {tmp4D.x, tmp4D.y, tmp4D.z};
+    res = tmp3D.dotProduct(normal, view);
+
+    if (res >= 0) {
+      TVector4D q0{w0};
+      TVector4D q1{w1};
+      TVector4D q2{w2};
+      TVector4D p;
+
+      const TVector3D c0 = {1, 0, 0};
+      const TVector3D c1 = {0, 1, 0};
+      const TVector3D c2 = {0, 0, 1};
+      TPoint min, max;
+
+      // Cambiamos a espacio de raster
+      q0.x = std::min((u_int32_t)resolution.x - 1,
+                      (u_int32_t)((q0.x + 1) * 0.5 * resolution.x));
+      q0.y = std::min((u_int32_t)resolution.y - 1,
+                      (u_int32_t)((1 - (q0.y + 1) * 0.5) * resolution.y));
+
+      q1.x = std::min((u_int32_t)resolution.x - 1,
+                      (u_int32_t)((q1.x + 1) * 0.5 * resolution.x));
+      q1.y = std::min((u_int32_t)resolution.y - 1,
+                      (u_int32_t)((1 - (q1.y + 1) * 0.5) * resolution.y));
+
+      q2.x = std::min((u_int32_t)resolution.x - 1,
+                      (u_int32_t)((q2.x + 1) * 0.5 * resolution.x));
+      q2.y = std::min((u_int32_t)resolution.y - 1,
+                      (u_int32_t)((1 - (q2.y + 1) * 0.5) * resolution.y));
+
+      // Calculamos coordenadas que acotan al triángulo
+      min.x = static_cast<int>(std::min({q0.x, q1.x, q2.x}));
+      min.y = static_cast<int>(std::min({q0.y, q1.y, q2.y}));
+      max.x = static_cast<int>(std::max({q0.x, q1.x, q2.x}));
+      max.y = static_cast<int>(std::max({q0.y, q1.y, q2.y}));
+
+      float r0, g0, b0;
+      float area = areaTriangle(q0, q1, q2);
+      float a0, a1, a2;
+
+      for (int y = min.y; y < max.y; y++)
+        for (int x = min.x; x < max.x; x++) {
+          p = {static_cast<float>(x), static_cast<float>(y), 0};
+          a0 = areaTriangle(q1, q2, p);
+          a1 = areaTriangle(q2, q0, p);
+          a2 = areaTriangle(q0, q1, p);
+          a0 /= area;
+          a1 /= area;
+          a2 /= area;
+          if (a0 >= 0 && a1 >= 0 && a2 >= 0) {
+
+            r0 = a0 * c0[0] + a1 * c1[0] + a2 * c2[0];
+            g0 = a0 * c0[1] + a1 * c1[1] + a2 * c2[1];
+            b0 = a0 * c0[2] + a1 * c1[2] + a2 * c2[2];
+
+            float oneOverZ = q0.z * a0 + q1.z * a1 + q2.z * a2;
+            float z = 1 / oneOverZ;
+            if (z < depthBuffer[y * resolution.x + x]) {
+              depthBuffer[y * resolution.x + x] = z;
+
+              float intensity =
+                  normal.dotProduct(normal.normalize(), light_dir.normalize());
+              if (isInImage(TPoint(x, y), resolution)) {
+                data[4 * resolution.x * y + 4 * x + 0] =
+                    std::min(255, static_cast<int>(intensity * 255 * color.x));
+                data[4 * resolution.x * y + 4 * x + 1] =
+                    std::min(255, static_cast<int>(intensity * 255 * color.y));
+                data[4 * resolution.x * y + 4 * x + 2] =
+                    std::min(255, static_cast<int>(intensity * 255 * color.z));
+                data[4 * resolution.x * y + 4 * x + 3] = a;
+              }
+            }
+          }
+        }
+    }
+  }
+}
+
 void TDraw::wireframe(std::vector<unsigned char> &data,
                       const TPoint &resolution, TModel &model) {
   TVector4D w0, w1, w2, w3;
@@ -758,3 +1123,12 @@ void TDraw::fillTriangle(const TVector4D &p1, const TVector4D &p2,
       }
     }
 }
+void TDraw::setAmbientLight(const TVector4D &p1, const TVector4D &p2,
+                            const TVector4D &p3,
+                            std::vector<unsigned char> &img,
+                            std::vector<float> &depthBuffer,
+                            const TPoint &res) {}
+
+void TDraw::ambientLight(std::vector<unsigned char> &data,
+                         std::vector<float> &depthBuffer,
+                         const TPoint &resolution, TModel &model) {}

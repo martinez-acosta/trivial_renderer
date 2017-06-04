@@ -19,6 +19,15 @@ public:
   void zBuffer(std::vector<unsigned char> &data,
                std::vector<float> &depthBuffer, const TPoint &resolution,
                TModel &model);
+  void flatShading(std::vector<unsigned char> &data,
+                   std::vector<float> &depthBuffer, const TPoint &resolution,
+                   TModel &model);
+  void gourandShading(std::vector<unsigned char> &data,
+                      std::vector<float> &depthBuffer, const TPoint &resolution,
+                      TModel &model);
+  void ambientLight(std::vector<unsigned char> &data,
+                    std::vector<float> &depthBuffer, const TPoint &resolution,
+                    TModel &model);
   void explicitLine(const TPoint &p1, const TPoint &p2, int *img,
                     const TPoint &resolution);
   void wireframe(std::vector<unsigned char> &data, const TPoint &resolution,
@@ -46,6 +55,10 @@ private:
   void fillTriangle(const TVector4D &p1, const TVector4D &p2,
                     const TVector4D &p3, std::vector<unsigned char> &img,
                     std::vector<float> &depthBuffer, const TPoint &resolution);
+  void setAmbientLight(const TVector4D &p1, const TVector4D &p2,
+                       const TVector4D &p3, std::vector<unsigned char> &img,
+                       std::vector<float> &depthBuffer,
+                       const TPoint &resolution);
   float areaTriangle(const TVector4D &p1, const TVector4D &p2,
                      const TVector4D &p3);
 };

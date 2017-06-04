@@ -50,17 +50,18 @@ const char *gengetopt_args_info_help[] = {
   "      --scale-z=STRING          Escala en z",
   "      --wireframe               activa el renderizado wireframe",
   "      --faceHiding              activa el ocultamiento de caras",
-  "      --flatShading             activa el renderizado con flatShading",
   "      --bezier-curve=STRING     curva de bézier a seguir con cuatro puntos de\n                                  control en la forma p1,p2,p3,p4",
   "      --hermite-curve=STRING    curva de hermite a seguir con dos puntos de\n                                  control en la forma p1,p2",
   "      --bezier-surface=STRING   archivo de superficie de bézier con los 16\n                                  puntos",
   "      --hermite-surface=STRING  archivo de superficie de hermite con los 16\n                                  puntos",
   "      --line=STRING             línea a seguir, dos puntos: p1,p2",
+  "      --zBuffer                 z bufffer con coordenadas baricéntricas",
   "      --specular=STRING         activa la iluminación especular",
   "      --ambient=STRING          activa la iluminación de ambiente",
   "      --diffuse=STRING          activa la iluminación difusa",
   "      --phong=STRING            modelo de iluminación de Phong",
   "      --gourand=STRING          modelo de iluminación de Gourand",
+  "      --flatShading=STRING      activa el renderizado con flatShading",
     0
 };
 
@@ -102,17 +103,18 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->scale_z_given = 0 ;
   args_info->wireframe_given = 0 ;
   args_info->faceHiding_given = 0 ;
-  args_info->flatShading_given = 0 ;
   args_info->bezier_curve_given = 0 ;
   args_info->hermite_curve_given = 0 ;
   args_info->bezier_surface_given = 0 ;
   args_info->hermite_surface_given = 0 ;
   args_info->line_given = 0 ;
+  args_info->zBuffer_given = 0 ;
   args_info->specular_given = 0 ;
   args_info->ambient_given = 0 ;
   args_info->diffuse_given = 0 ;
   args_info->phong_given = 0 ;
   args_info->gourand_given = 0 ;
+  args_info->flatShading_given = 0 ;
 }
 
 static
@@ -163,6 +165,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->phong_orig = NULL;
   args_info->gourand_arg = NULL;
   args_info->gourand_orig = NULL;
+  args_info->flatShading_arg = NULL;
+  args_info->flatShading_orig = NULL;
   
 }
 
@@ -187,17 +191,18 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->scale_z_help = gengetopt_args_info_help[13] ;
   args_info->wireframe_help = gengetopt_args_info_help[14] ;
   args_info->faceHiding_help = gengetopt_args_info_help[15] ;
-  args_info->flatShading_help = gengetopt_args_info_help[16] ;
-  args_info->bezier_curve_help = gengetopt_args_info_help[17] ;
-  args_info->hermite_curve_help = gengetopt_args_info_help[18] ;
-  args_info->bezier_surface_help = gengetopt_args_info_help[19] ;
-  args_info->hermite_surface_help = gengetopt_args_info_help[20] ;
-  args_info->line_help = gengetopt_args_info_help[21] ;
+  args_info->bezier_curve_help = gengetopt_args_info_help[16] ;
+  args_info->hermite_curve_help = gengetopt_args_info_help[17] ;
+  args_info->bezier_surface_help = gengetopt_args_info_help[18] ;
+  args_info->hermite_surface_help = gengetopt_args_info_help[19] ;
+  args_info->line_help = gengetopt_args_info_help[20] ;
+  args_info->zBuffer_help = gengetopt_args_info_help[21] ;
   args_info->specular_help = gengetopt_args_info_help[22] ;
   args_info->ambient_help = gengetopt_args_info_help[23] ;
   args_info->diffuse_help = gengetopt_args_info_help[24] ;
   args_info->phong_help = gengetopt_args_info_help[25] ;
   args_info->gourand_help = gengetopt_args_info_help[26] ;
+  args_info->flatShading_help = gengetopt_args_info_help[27] ;
   
 }
 
@@ -325,6 +330,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->phong_orig));
   free_string_field (&(args_info->gourand_arg));
   free_string_field (&(args_info->gourand_orig));
+  free_string_field (&(args_info->flatShading_arg));
+  free_string_field (&(args_info->flatShading_orig));
   
   
 
@@ -387,8 +394,6 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "wireframe", 0, 0 );
   if (args_info->faceHiding_given)
     write_into_file(outfile, "faceHiding", 0, 0 );
-  if (args_info->flatShading_given)
-    write_into_file(outfile, "flatShading", 0, 0 );
   if (args_info->bezier_curve_given)
     write_into_file(outfile, "bezier-curve", args_info->bezier_curve_orig, 0);
   if (args_info->hermite_curve_given)
@@ -399,6 +404,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "hermite-surface", args_info->hermite_surface_orig, 0);
   if (args_info->line_given)
     write_into_file(outfile, "line", args_info->line_orig, 0);
+  if (args_info->zBuffer_given)
+    write_into_file(outfile, "zBuffer", 0, 0 );
   if (args_info->specular_given)
     write_into_file(outfile, "specular", args_info->specular_orig, 0);
   if (args_info->ambient_given)
@@ -409,6 +416,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "phong", args_info->phong_orig, 0);
   if (args_info->gourand_given)
     write_into_file(outfile, "gourand", args_info->gourand_orig, 0);
+  if (args_info->flatShading_given)
+    write_into_file(outfile, "flatShading", args_info->flatShading_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -546,6 +555,18 @@ cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *pro
   if (! args_info->angleOfView_given)
     {
       fprintf (stderr, "%s: '--angleOfView' option required%s\n", prog_name, (additional_error ? additional_error : ""));
+      error_occurred = 1;
+    }
+  
+  if (! args_info->near_given)
+    {
+      fprintf (stderr, "%s: '--near' option required%s\n", prog_name, (additional_error ? additional_error : ""));
+      error_occurred = 1;
+    }
+  
+  if (! args_info->far_given)
+    {
+      fprintf (stderr, "%s: '--far' option required%s\n", prog_name, (additional_error ? additional_error : ""));
       error_occurred = 1;
     }
   
@@ -707,17 +728,18 @@ cmdline_parser_internal (
         { "scale-z",	1, NULL, 0 },
         { "wireframe",	0, NULL, 0 },
         { "faceHiding",	0, NULL, 0 },
-        { "flatShading",	0, NULL, 0 },
         { "bezier-curve",	1, NULL, 0 },
         { "hermite-curve",	1, NULL, 0 },
         { "bezier-surface",	1, NULL, 0 },
         { "hermite-surface",	1, NULL, 0 },
         { "line",	1, NULL, 0 },
+        { "zBuffer",	0, NULL, 0 },
         { "specular",	1, NULL, 0 },
         { "ambient",	1, NULL, 0 },
         { "diffuse",	1, NULL, 0 },
         { "phong",	1, NULL, 0 },
         { "gourand",	1, NULL, 0 },
+        { "flatShading",	1, NULL, 0 },
         { 0,  0, 0, 0 }
       };
 
@@ -929,20 +951,6 @@ cmdline_parser_internal (
               goto failure;
           
           }
-          /* activa el renderizado con flatShading.  */
-          else if (strcmp (long_options[option_index].name, "flatShading") == 0)
-          {
-          
-          
-            if (update_arg( 0 , 
-                 0 , &(args_info->flatShading_given),
-                &(local_args_info.flatShading_given), optarg, 0, 0, ARG_NO,
-                check_ambiguity, override, 0, 0,
-                "flatShading", '-',
-                additional_error))
-              goto failure;
-          
-          }
           /* curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4.  */
           else if (strcmp (long_options[option_index].name, "bezier-curve") == 0)
           {
@@ -1013,6 +1021,20 @@ cmdline_parser_internal (
               goto failure;
           
           }
+          /* z bufffer con coordenadas baricéntricas.  */
+          else if (strcmp (long_options[option_index].name, "zBuffer") == 0)
+          {
+          
+          
+            if (update_arg( 0 , 
+                 0 , &(args_info->zBuffer_given),
+                &(local_args_info.zBuffer_given), optarg, 0, 0, ARG_NO,
+                check_ambiguity, override, 0, 0,
+                "zBuffer", '-',
+                additional_error))
+              goto failure;
+          
+          }
           /* activa la iluminación especular.  */
           else if (strcmp (long_options[option_index].name, "specular") == 0)
           {
@@ -1079,6 +1101,20 @@ cmdline_parser_internal (
                 &(local_args_info.gourand_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "gourand", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* activa el renderizado con flatShading.  */
+          else if (strcmp (long_options[option_index].name, "flatShading") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->flatShading_arg), 
+                 &(args_info->flatShading_orig), &(args_info->flatShading_given),
+                &(local_args_info.flatShading_given), optarg, 0, 0, ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "flatShading", '-',
                 additional_error))
               goto failure;
           

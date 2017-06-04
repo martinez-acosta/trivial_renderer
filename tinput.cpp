@@ -21,7 +21,7 @@ TInput::TInput() {
 }
 
 void TInput::getInput(int argc, char **argv, TModel &model) {
-
+  char a;
   if (cmdline_parser(argc, argv, &args_info))
     error("Error from cmdline_parse() in getInput(int argc, char *argv[])");
 
@@ -44,11 +44,30 @@ void TInput::getInput(int argc, char **argv, TModel &model) {
   if (args_info.faceHiding_given)
     model.info.faceHiding = true;
 
-  if (args_info.flatShading_given)
+  if (args_info.zBuffer_given) {
+    model.info.zBuffer = true;
+  }
+  if (args_info.flatShading_given) {
     model.info.flatShading = true;
+    sscanf(args_info.flatShading_arg, "%f%c%f%c%f%c%f%c%f%c%f",
+           &model.info.luces.flatShading.pos.x, &a,
+           &model.info.luces.flatShading.pos.y, &a,
+           &model.info.luces.flatShading.pos.z, &a,
+           &model.info.luces.flatShading.color.x, &a,
+           &model.info.luces.flatShading.color.y, &a,
+           &model.info.luces.flatShading.color.z);
+  }
 
-  if (args_info.ambient_given)
+  if (args_info.ambient_given) {
+
     model.info.lightAmbient = true;
+    sscanf(args_info.ambient_arg, "%f%c%f%c%f%c%f%c%f%c%f",
+           &model.info.luces.ambient.pos.x, &a, &model.info.luces.ambient.pos.y,
+           &a, &model.info.luces.ambient.pos.z, &a,
+           &model.info.luces.ambient.color.x, &a,
+           &model.info.luces.ambient.color.y, &a,
+           &model.info.luces.ambient.color.z);
+  }
 
   if (args_info.diffuse_given)
     model.info.lightDiffuse = true;
@@ -59,8 +78,15 @@ void TInput::getInput(int argc, char **argv, TModel &model) {
   if (args_info.phong_given)
     model.info.phong = true;
 
-  if (args_info.gourand_given)
+  if (args_info.gourand_given) {
     model.info.gourand = true;
+    sscanf(args_info.gourand_arg, "%f%c%f%c%f%c%f%c%f%c%f",
+           &model.info.luces.gourand.pos.x, &a, &model.info.luces.gourand.pos.y,
+           &a, &model.info.luces.gourand.pos.z, &a,
+           &model.info.luces.gourand.color.x, &a,
+           &model.info.luces.gourand.color.y, &a,
+           &model.info.luces.gourand.color.z);
+  }
 
   if (args_info.bezier_curve_given)
     model.info.bezierCurve = true;
@@ -101,7 +127,7 @@ void TInput::getInput(int argc, char **argv, TModel &model) {
            &model.info.cam.pos.y, &a, &model.info.cam.pos.z);
   }
   // Curvas
-  char a;
+
   if (args_info.bezier_curve_given) {
     sscanf(args_info.bezier_curve_arg, "%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f",
            &model.info.cbezier.p0.x, &a, &model.info.cbezier.p0.y, &a,

@@ -10,9 +10,9 @@ TImage::TImage(const int &w, const int &h) {
   height = h;
   for (unsigned y = 0; y < height; y++)
     for (unsigned x = 0; x < width; x++) {
-      data[4 * width * y + 4 * x + 0] = 255;
-      data[4 * width * y + 4 * x + 1] = 255;
-      data[4 * width * y + 4 * x + 2] = 255;
+      data[4 * width * y + 4 * x + 0] = 0;
+      data[4 * width * y + 4 * x + 1] = 0;
+      data[4 * width * y + 4 * x + 2] = 0;
       data[4 * width * y + 4 * x + 3] = 255;
     }
   // zbuffer

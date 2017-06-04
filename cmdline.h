@@ -77,7 +77,6 @@ struct gengetopt_args_info
   const char *scale_z_help; /**< @brief Escala en z help description.  */
   const char *wireframe_help; /**< @brief activa el renderizado wireframe help description.  */
   const char *faceHiding_help; /**< @brief activa el ocultamiento de caras help description.  */
-  const char *flatShading_help; /**< @brief activa el renderizado con flatShading help description.  */
   char * bezier_curve_arg;	/**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4.  */
   char * bezier_curve_orig;	/**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4 original value given at command line.  */
   const char *bezier_curve_help; /**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4 help description.  */
@@ -93,6 +92,7 @@ struct gengetopt_args_info
   char * line_arg;	/**< @brief línea a seguir, dos puntos: p1,p2.  */
   char * line_orig;	/**< @brief línea a seguir, dos puntos: p1,p2 original value given at command line.  */
   const char *line_help; /**< @brief línea a seguir, dos puntos: p1,p2 help description.  */
+  const char *zBuffer_help; /**< @brief z bufffer con coordenadas baricéntricas help description.  */
   char * specular_arg;	/**< @brief activa la iluminación especular.  */
   char * specular_orig;	/**< @brief activa la iluminación especular original value given at command line.  */
   const char *specular_help; /**< @brief activa la iluminación especular help description.  */
@@ -108,6 +108,9 @@ struct gengetopt_args_info
   char * gourand_arg;	/**< @brief modelo de iluminación de Gourand.  */
   char * gourand_orig;	/**< @brief modelo de iluminación de Gourand original value given at command line.  */
   const char *gourand_help; /**< @brief modelo de iluminación de Gourand help description.  */
+  char * flatShading_arg;	/**< @brief activa el renderizado con flatShading.  */
+  char * flatShading_orig;	/**< @brief activa el renderizado con flatShading original value given at command line.  */
+  const char *flatShading_help; /**< @brief activa el renderizado con flatShading help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -125,17 +128,18 @@ struct gengetopt_args_info
   unsigned int scale_z_given ;	/**< @brief Whether scale-z was given.  */
   unsigned int wireframe_given ;	/**< @brief Whether wireframe was given.  */
   unsigned int faceHiding_given ;	/**< @brief Whether faceHiding was given.  */
-  unsigned int flatShading_given ;	/**< @brief Whether flatShading was given.  */
   unsigned int bezier_curve_given ;	/**< @brief Whether bezier-curve was given.  */
   unsigned int hermite_curve_given ;	/**< @brief Whether hermite-curve was given.  */
   unsigned int bezier_surface_given ;	/**< @brief Whether bezier-surface was given.  */
   unsigned int hermite_surface_given ;	/**< @brief Whether hermite-surface was given.  */
   unsigned int line_given ;	/**< @brief Whether line was given.  */
+  unsigned int zBuffer_given ;	/**< @brief Whether zBuffer was given.  */
   unsigned int specular_given ;	/**< @brief Whether specular was given.  */
   unsigned int ambient_given ;	/**< @brief Whether ambient was given.  */
   unsigned int diffuse_given ;	/**< @brief Whether diffuse was given.  */
   unsigned int phong_given ;	/**< @brief Whether phong was given.  */
   unsigned int gourand_given ;	/**< @brief Whether gourand was given.  */
+  unsigned int flatShading_given ;	/**< @brief Whether flatShading was given.  */
 
 } ;
 

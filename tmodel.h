@@ -60,10 +60,22 @@ public:
     int v3;
     int v4;
   };
+  struct light {
+    TVector3D pos;
+    TVector3D color;
+  };
+  struct lights {
+    struct light ambient;
+    struct light diffuse;
+    struct light gourand;
+    struct light phong;
+    struct light flatShading;
+  };
   struct input {
     bool wireframe;
     bool faceHiding;
     bool flatShading;
+    bool zBuffer;
 
     bool lightAmbient;
     bool lightDiffuse;
@@ -87,9 +99,11 @@ public:
     struct hermite_curve chermite;
     struct bezier_surface bsurface;
     struct hermite_surface hsurface;
+    struct lights luces;
     struct camera cam;
     TPoint resolution;
   };
+
   TModel();
   struct input info;
   void rotate(const TVector3D &vector);

@@ -49,6 +49,7 @@ TModel::TModel() {
   info.wireframe = false;
   info.faceHiding = false;
   info.flatShading = false;
+  info.zBuffer = false;
 
   info.lightAmbient = false;
   info.lightDiffuse = false;
