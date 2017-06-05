@@ -269,7 +269,8 @@ void homogeneusDivide(TVector4D &v) {
 }
 void TDraw::flatShading(std::vector<unsigned char> &data,
                         std::vector<float> &depthBuffer,
-                        const TPoint &resolution, TModel &model) {
+                        const TPoint &resolution, TModel &model,
+                        TPoint &interpolated) {
   TVector4D w0, w1, w2, w3;
   TVector3D n0, n1, n2;
   TVector4D camVector0, camVector1, camVector2, camVector3;
@@ -402,6 +403,16 @@ void TDraw::flatShading(std::vector<unsigned char> &data,
       q2.y = std::min((u_int32_t)resolution.y - 1,
                       (u_int32_t)((1 - (q2.y + 1) * 0.5) * resolution.y));
 
+      // Trasladamos de acuerdo a la curva de bézier
+      q0.x += interpolated.x;
+      q0.y += interpolated.y;
+
+      q1.x += interpolated.x;
+      q1.y += interpolated.y;
+
+      q2.x += interpolated.x;
+      q2.y += interpolated.y;
+
       // Calculamos coordenadas que acotan al triángulo
       min.x = static_cast<int>(std::min({q0.x, q1.x, q2.x}));
       min.y = static_cast<int>(std::min({q0.y, q1.y, q2.y}));
@@ -451,7 +462,8 @@ void TDraw::flatShading(std::vector<unsigned char> &data,
 }
 void TDraw::gourandShading(std::vector<unsigned char> &data,
                            std::vector<float> &depthBuffer,
-                           const TPoint &resolution, TModel &model) {
+                           const TPoint &resolution, TModel &model,
+                           TPoint &interpolated) {
   TVector4D w0, w1, w2, w3;
   TVector3D n0, n1, n2;
   TVector4D camVector0, camVector1, camVector2, camVector3;
@@ -584,6 +596,16 @@ void TDraw::gourandShading(std::vector<unsigned char> &data,
       q2.y = std::min((u_int32_t)resolution.y - 1,
                       (u_int32_t)((1 - (q2.y + 1) * 0.5) * resolution.y));
 
+      // Trasladamos de acuerdo a la curva de bézier
+      q0.x += interpolated.x;
+      q0.y += interpolated.y;
+
+      q1.x += interpolated.x;
+      q1.y += interpolated.y;
+
+      q2.x += interpolated.x;
+      q2.y += interpolated.y;
+
       // Calculamos coordenadas que acotan al triángulo
       min.x = static_cast<int>(std::min({q0.x, q1.x, q2.x}));
       min.y = static_cast<int>(std::min({q0.y, q1.y, q2.y}));
@@ -633,7 +655,8 @@ void TDraw::gourandShading(std::vector<unsigned char> &data,
 }
 
 void TDraw::wireframe(std::vector<unsigned char> &data,
-                      const TPoint &resolution, TModel &model) {
+                      const TPoint &resolution, TModel &model,
+                      TPoint &interpolated) {
   TVector4D w0, w1, w2, w3;
   TVector4D camVector0, camVector1, camVector2, camVector3;
   // Matriz de cambio de base: Espacio global a espacio de cámara
@@ -660,7 +683,6 @@ void TDraw::wireframe(std::vector<unsigned char> &data,
   // Asignamos perspectiva y frustum
   model.setPerspective();
   model.setFrustum(MProj);
-
   for (auto face : model.faces_for_vertexes) {
 
     w0 = model.list_vertexes.at(face.v1 - 1);
@@ -695,6 +717,7 @@ void TDraw::wireframe(std::vector<unsigned char> &data,
     if (face.n_faces == 4) {
       w3 = camVector3 * MProj;
     }
+
     // Comprobamos que cada punto esté dentro del cubo unitario
     if (w0.x < -aspectRatio || w0.x > aspectRatio || w0.y < -1 || w0.y > 1)
       continue;
@@ -707,28 +730,37 @@ void TDraw::wireframe(std::vector<unsigned char> &data,
         continue;
 
     // Cambiamos a espacio de raster
-    p0.x = std::min((u_int32_t)resolution.x - 1,
-                    (u_int32_t)((w0.x + 1) * 0.5 * resolution.x));
-    p0.y = std::min((u_int32_t)resolution.y - 1,
-                    (u_int32_t)((1 - (w0.y + 1) * 0.5) * resolution.y));
+    p0.x = std::min((int32_t)resolution.x - 1,
+                    (int32_t)((w0.x + 1) * 0.5 * resolution.x));
+    p0.y = std::min((int32_t)resolution.y - 1,
+                    (int32_t)((1 - (w0.y + 1) * 0.5) * resolution.y));
 
-    p1.x = std::min((u_int32_t)resolution.x - 1,
-                    (u_int32_t)((w1.x + 1) * 0.5 * resolution.x));
-    p1.y = std::min((u_int32_t)resolution.y - 1,
-                    (u_int32_t)((1 - (w1.y + 1) * 0.5) * resolution.y));
+    p1.x = std::min((int32_t)resolution.x - 1,
+                    (int32_t)((w1.x + 1) * 0.5 * resolution.x));
+    p1.y = std::min((int32_t)resolution.y - 1,
+                    (int32_t)((1 - (w1.y + 1) * 0.5) * resolution.y));
 
-    p2.x = std::min((u_int32_t)resolution.x - 1,
-                    (u_int32_t)((w2.x + 1) * 0.5 * resolution.x));
-    p2.y = std::min((u_int32_t)resolution.y - 1,
-                    (u_int32_t)((1 - (w2.y + 1) * 0.5) * resolution.y));
+    p2.x = std::min((int32_t)resolution.x - 1,
+                    (int32_t)((w2.x + 1) * 0.5 * resolution.x));
+    p2.y = std::min((int32_t)resolution.y - 1,
+                    (int32_t)((1 - (w2.y + 1) * 0.5) * resolution.y));
 
     if (face.n_faces == 4) {
-      p3.x = std::min((u_int32_t)resolution.x - 1,
-                      (u_int32_t)((w3.x + 1) * 0.5 * resolution.x));
-      p3.y = std::min((u_int32_t)resolution.y - 1,
-                      (u_int32_t)((1 - (w3.y + 1) * 0.5) * resolution.y));
+      p3.x = std::min((int32_t)resolution.x - 1,
+                      (int32_t)((w3.x + 1) * 0.5 * resolution.x));
+      p3.y = std::min((int32_t)resolution.y - 1,
+                      (int32_t)((1 - (w3.y + 1) * 0.5) * resolution.y));
     }
 
+    // Trasladamos de acuerdo a la curva de bézier
+    p0.x += interpolated.x;
+    p0.y += interpolated.y;
+
+    p1.x += interpolated.x;
+    p1.y += interpolated.y;
+
+    p2.x += interpolated.x;
+    p2.y += interpolated.y;
     // p0 con p1
     bresenhamLine(p0, p1, data, resolution);
     // p1 con p2
@@ -764,7 +796,8 @@ void TDraw::interpolateTriangle(std::vector<unsigned char> &data,
 }
 
 void TDraw::faceHiding(std::vector<unsigned char> &data,
-                       const TPoint &resolution, TModel &model) {
+                       const TPoint &resolution, TModel &model,
+                       TPoint &interpolated) {
   TVector4D w0, w1, w2, w3;
   TVector4D camVector0, camVector1, camVector2, camVector3;
   // Matriz de cambio de base: Espacio global a espacio de cámara
@@ -878,6 +911,15 @@ void TDraw::faceHiding(std::vector<unsigned char> &data,
     res = tmp3D.dotProduct(normal, view);
 
     if (res >= 0) {
+      // Trasladamos de acuerdo a la curva de bézier
+      p0.x += interpolated.x;
+      p0.y += interpolated.y;
+
+      p1.x += interpolated.x;
+      p1.y += interpolated.y;
+
+      p2.x += interpolated.x;
+      p2.y += interpolated.y;
       bresenhamLine(p0, p1, data, resolution);
       // p1 con p2
       bresenhamLine(p1, p2, data, resolution);
@@ -903,7 +945,7 @@ void TDraw::faceHiding(std::vector<unsigned char> &data,
 
 void TDraw::zBuffer(std::vector<unsigned char> &data,
                     std::vector<float> &depthBuffer, const TPoint &resolution,
-                    TModel &model) {
+                    TModel &model, TPoint &interpolated) {
   TVector4D w0, w1, w2, w3;
   TVector4D camVector0, camVector1, camVector2, camVector3;
   // Matriz de cambio de base: Espacio global a espacio de cámara
@@ -1000,7 +1042,7 @@ void TDraw::zBuffer(std::vector<unsigned char> &data,
     res = tmp3D.dotProduct(normal, view);
 
     if (res >= 0) {
-      fillTriangle(w0, w1, w2, data, depthBuffer, resolution);
+      fillTriangle(w0, w1, w2, data, depthBuffer, resolution, interpolated);
     }
   }
 }
@@ -1056,7 +1098,8 @@ void TDraw::fillTriangle(const TVector4D &p1, const TVector4D &p2,
 }
 void TDraw::fillTriangle(const TVector4D &p1, const TVector4D &p2,
                          const TVector4D &p3, std::vector<unsigned char> &img,
-                         std::vector<float> &depthBuffer, const TPoint &res) {
+                         std::vector<float> &depthBuffer, const TPoint &res,
+                         const TPoint &interpolated) {
   TVector4D q0{p1};
   TVector4D q1{p2};
   TVector4D q2{p3};
@@ -1079,6 +1122,16 @@ void TDraw::fillTriangle(const TVector4D &p1, const TVector4D &p2,
   q2.x = std::min((u_int32_t)res.x - 1, (u_int32_t)((q2.x + 1) * 0.5 * res.x));
   q2.y = std::min((u_int32_t)res.y - 1,
                   (u_int32_t)((1 - (q2.y + 1) * 0.5) * res.y));
+
+  // Trasladamos de acuerdo a la curva de bézier
+  q0.x += interpolated.x;
+  q0.y += interpolated.y;
+
+  q1.x += interpolated.x;
+  q1.y += interpolated.y;
+
+  q2.x += interpolated.x;
+  q2.y += interpolated.y;
 
   // Calculamos coordenadas que acotan al triángulo
   min.x = static_cast<int>(std::min({q0.x, q1.x, q2.x}));

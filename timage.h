@@ -12,6 +12,7 @@ public:
   inline std::vector<unsigned char> &getData() { return data; }
   inline std::vector<float> &getDepthBuffer() { return depthBuffer; }
   void save(const std::string &filename);
+  void restart();
 
 private:
   int width;

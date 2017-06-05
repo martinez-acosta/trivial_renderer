@@ -63,6 +63,9 @@ struct gengetopt_args_info
   char * rotate_arg;	/**< @brief Rotación x,y,z.  */
   char * rotate_orig;	/**< @brief Rotación x,y,z original value given at command line.  */
   const char *rotate_help; /**< @brief Rotación x,y,z help description.  */
+  char * time_arg;	/**< @brief tiempo a animar en minutos.  */
+  char * time_orig;	/**< @brief tiempo a animar en minutos original value given at command line.  */
+  const char *time_help; /**< @brief tiempo a animar en minutos help description.  */
   char * scale_arg;	/**< @brief Escalar la figura en x,y,z.  */
   char * scale_orig;	/**< @brief Escalar la figura en x,y,z original value given at command line.  */
   const char *scale_help; /**< @brief Escalar la figura en x,y,z help description.  */
@@ -122,6 +125,7 @@ struct gengetopt_args_info
   unsigned int near_given ;	/**< @brief Whether near was given.  */
   unsigned int far_given ;	/**< @brief Whether far was given.  */
   unsigned int rotate_given ;	/**< @brief Whether rotate was given.  */
+  unsigned int time_given ;	/**< @brief Whether time was given.  */
   unsigned int scale_given ;	/**< @brief Whether scale was given.  */
   unsigned int scale_x_given ;	/**< @brief Whether scale-x was given.  */
   unsigned int scale_y_given ;	/**< @brief Whether scale-y was given.  */

@@ -15,23 +15,23 @@ public:
                      std::vector<unsigned char> &img, const TPoint &resolution);
 
   void faceHiding(std::vector<unsigned char> &data, const TPoint &resolution,
-                  TModel &model);
+                  TModel &model, TPoint &interpolated);
   void zBuffer(std::vector<unsigned char> &data,
                std::vector<float> &depthBuffer, const TPoint &resolution,
-               TModel &model);
+               TModel &model, TPoint &interpolated);
   void flatShading(std::vector<unsigned char> &data,
                    std::vector<float> &depthBuffer, const TPoint &resolution,
-                   TModel &model);
+                   TModel &model, TPoint &interpolated);
   void gourandShading(std::vector<unsigned char> &data,
                       std::vector<float> &depthBuffer, const TPoint &resolution,
-                      TModel &model);
+                      TModel &model, TPoint &interpolated);
   void ambientLight(std::vector<unsigned char> &data,
                     std::vector<float> &depthBuffer, const TPoint &resolution,
                     TModel &model);
   void explicitLine(const TPoint &p1, const TPoint &p2, int *img,
                     const TPoint &resolution);
   void wireframe(std::vector<unsigned char> &data, const TPoint &resolution,
-                 TModel &model);
+                 TModel &model, TPoint &interpolated);
   void interpolateTriangle(std::vector<unsigned char> &data,
                            const TPoint &resolution, const TModel &model);
 
@@ -54,7 +54,8 @@ private:
                     const TPoint &resolution);
   void fillTriangle(const TVector4D &p1, const TVector4D &p2,
                     const TVector4D &p3, std::vector<unsigned char> &img,
-                    std::vector<float> &depthBuffer, const TPoint &resolution);
+                    std::vector<float> &depthBuffer, const TPoint &resolution,
+                    const TPoint &interpolated);
   void setAmbientLight(const TVector4D &p1, const TVector4D &p2,
                        const TVector4D &p3, std::vector<unsigned char> &img,
                        std::vector<float> &depthBuffer,

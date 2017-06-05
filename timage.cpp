@@ -4,7 +4,6 @@
 #include <memory>
 
 TImage::TImage(const int &w, const int &h) {
-  int lim = std::numeric_limits<int>::lowest();
   data.resize(w * h * 4);
   width = w;
   height = h;
@@ -17,6 +16,18 @@ TImage::TImage(const int &w, const int &h) {
     }
   // zbuffer
   depthBuffer.resize(w * h);
+}
+void TImage::restart() {
+  data.resize(width * height * 4);
+  for (unsigned y = 0; y < height; y++)
+    for (unsigned x = 0; x < width; x++) {
+      data[4 * width * y + 4 * x + 0] = 0;
+      data[4 * width * y + 4 * x + 1] = 0;
+      data[4 * width * y + 4 * x + 2] = 0;
+      data[4 * width * y + 4 * x + 3] = 255;
+    }
+  // zbuffer
+  // depthBuffer.resize(width * height);
 }
 void TImage::save(const std::string &filename) {
   // Encode the image

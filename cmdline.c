@@ -44,6 +44,7 @@ const char *gengetopt_args_info_help[] = {
   "      --near=STRING             plano cercano",
   "      --far=STRING              plano lejano",
   "      --rotate=STRING           Rotación x,y,z",
+  "      --time=STRING             tiempo a animar en minutos",
   "  -s, --scale=STRING            Escalar la figura en x,y,z",
   "      --scale-x=STRING          Escala en x",
   "      --scale-y=STRING          Escala en y",
@@ -97,6 +98,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->near_given = 0 ;
   args_info->far_given = 0 ;
   args_info->rotate_given = 0 ;
+  args_info->time_given = 0 ;
   args_info->scale_given = 0 ;
   args_info->scale_x_given = 0 ;
   args_info->scale_y_given = 0 ;
@@ -137,6 +139,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->far_orig = NULL;
   args_info->rotate_arg = NULL;
   args_info->rotate_orig = NULL;
+  args_info->time_arg = NULL;
+  args_info->time_orig = NULL;
   args_info->scale_arg = NULL;
   args_info->scale_orig = NULL;
   args_info->scale_x_arg = NULL;
@@ -185,24 +189,25 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->near_help = gengetopt_args_info_help[7] ;
   args_info->far_help = gengetopt_args_info_help[8] ;
   args_info->rotate_help = gengetopt_args_info_help[9] ;
-  args_info->scale_help = gengetopt_args_info_help[10] ;
-  args_info->scale_x_help = gengetopt_args_info_help[11] ;
-  args_info->scale_y_help = gengetopt_args_info_help[12] ;
-  args_info->scale_z_help = gengetopt_args_info_help[13] ;
-  args_info->wireframe_help = gengetopt_args_info_help[14] ;
-  args_info->faceHiding_help = gengetopt_args_info_help[15] ;
-  args_info->bezier_curve_help = gengetopt_args_info_help[16] ;
-  args_info->hermite_curve_help = gengetopt_args_info_help[17] ;
-  args_info->bezier_surface_help = gengetopt_args_info_help[18] ;
-  args_info->hermite_surface_help = gengetopt_args_info_help[19] ;
-  args_info->line_help = gengetopt_args_info_help[20] ;
-  args_info->zBuffer_help = gengetopt_args_info_help[21] ;
-  args_info->specular_help = gengetopt_args_info_help[22] ;
-  args_info->ambient_help = gengetopt_args_info_help[23] ;
-  args_info->diffuse_help = gengetopt_args_info_help[24] ;
-  args_info->phong_help = gengetopt_args_info_help[25] ;
-  args_info->gourand_help = gengetopt_args_info_help[26] ;
-  args_info->flatShading_help = gengetopt_args_info_help[27] ;
+  args_info->time_help = gengetopt_args_info_help[10] ;
+  args_info->scale_help = gengetopt_args_info_help[11] ;
+  args_info->scale_x_help = gengetopt_args_info_help[12] ;
+  args_info->scale_y_help = gengetopt_args_info_help[13] ;
+  args_info->scale_z_help = gengetopt_args_info_help[14] ;
+  args_info->wireframe_help = gengetopt_args_info_help[15] ;
+  args_info->faceHiding_help = gengetopt_args_info_help[16] ;
+  args_info->bezier_curve_help = gengetopt_args_info_help[17] ;
+  args_info->hermite_curve_help = gengetopt_args_info_help[18] ;
+  args_info->bezier_surface_help = gengetopt_args_info_help[19] ;
+  args_info->hermite_surface_help = gengetopt_args_info_help[20] ;
+  args_info->line_help = gengetopt_args_info_help[21] ;
+  args_info->zBuffer_help = gengetopt_args_info_help[22] ;
+  args_info->specular_help = gengetopt_args_info_help[23] ;
+  args_info->ambient_help = gengetopt_args_info_help[24] ;
+  args_info->diffuse_help = gengetopt_args_info_help[25] ;
+  args_info->phong_help = gengetopt_args_info_help[26] ;
+  args_info->gourand_help = gengetopt_args_info_help[27] ;
+  args_info->flatShading_help = gengetopt_args_info_help[28] ;
   
 }
 
@@ -302,6 +307,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->far_orig));
   free_string_field (&(args_info->rotate_arg));
   free_string_field (&(args_info->rotate_orig));
+  free_string_field (&(args_info->time_arg));
+  free_string_field (&(args_info->time_orig));
   free_string_field (&(args_info->scale_arg));
   free_string_field (&(args_info->scale_orig));
   free_string_field (&(args_info->scale_x_arg));
@@ -382,6 +389,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "far", args_info->far_orig, 0);
   if (args_info->rotate_given)
     write_into_file(outfile, "rotate", args_info->rotate_orig, 0);
+  if (args_info->time_given)
+    write_into_file(outfile, "time", args_info->time_orig, 0);
   if (args_info->scale_given)
     write_into_file(outfile, "scale", args_info->scale_orig, 0);
   if (args_info->scale_x_given)
@@ -722,6 +731,7 @@ cmdline_parser_internal (
         { "near",	1, NULL, 0 },
         { "far",	1, NULL, 0 },
         { "rotate",	1, NULL, 0 },
+        { "time",	1, NULL, 0 },
         { "scale",	1, NULL, 's' },
         { "scale-x",	1, NULL, 0 },
         { "scale-y",	1, NULL, 0 },
@@ -877,6 +887,20 @@ cmdline_parser_internal (
                 &(local_args_info.rotate_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "rotate", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* tiempo a animar en minutos.  */
+          else if (strcmp (long_options[option_index].name, "time") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->time_arg), 
+                 &(args_info->time_orig), &(args_info->time_given),
+                &(local_args_info.time_given), optarg, 0, 0, ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "time", '-',
                 additional_error))
               goto failure;
           

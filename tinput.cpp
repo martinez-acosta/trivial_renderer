@@ -47,6 +47,10 @@ void TInput::getInput(int argc, char **argv, TModel &model) {
   if (args_info.zBuffer_given) {
     model.info.zBuffer = true;
   }
+  if (args_info.time_given) {
+    model.info.atime = true;
+    model.info.tiempo = std::stoi(args_info.time_arg);
+  }
   if (args_info.flatShading_given) {
     model.info.flatShading = true;
     sscanf(args_info.flatShading_arg, "%f%c%f%c%f%c%f%c%f%c%f",

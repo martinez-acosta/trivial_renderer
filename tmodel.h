@@ -76,6 +76,8 @@ public:
     bool faceHiding;
     bool flatShading;
     bool zBuffer;
+    bool atime;
+    int tiempo;
 
     bool lightAmbient;
     bool lightDiffuse;
