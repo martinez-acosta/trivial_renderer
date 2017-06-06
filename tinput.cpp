@@ -79,8 +79,15 @@ void TInput::getInput(int argc, char **argv, TModel &model) {
   if (args_info.specular_given)
     model.info.lightSpecular = true;
 
-  if (args_info.phong_given)
+  if (args_info.phong_given) {
     model.info.phong = true;
+    sscanf(args_info.phong_arg, "%f%c%f%c%f%c%f%c%f%c%f%c%d",
+           &model.info.luces.phong.light_dir.pos.x, &a,
+           &model.info.luces.phong.light_dir.pos.y, &a,
+           &model.info.luces.phong.light_dir.pos.z, &a,
+           &model.info.luces.phong.Ka, &a, &model.info.luces.phong.Kd, &a,
+           &model.info.luces.phong.Ks, &a, &model.info.luces.phong.shin);
+  }
 
   if (args_info.gourand_given) {
     model.info.gourand = true;

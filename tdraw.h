@@ -25,6 +25,9 @@ public:
   void gourandShading(std::vector<unsigned char> &data,
                       std::vector<float> &depthBuffer, const TPoint &resolution,
                       TModel &model, TPoint &interpolated);
+  void phongShading(std::vector<unsigned char> &data,
+                    std::vector<float> &depthBuffer, const TPoint &resolution,
+                    TModel &model, TPoint &interpolated);
   void ambientLight(std::vector<unsigned char> &data,
                     std::vector<float> &depthBuffer, const TPoint &resolution,
                     TModel &model);
@@ -47,6 +50,7 @@ private:
     seventh = 7,
     eighth = 8
   };
+
   bool isInImage(const TPoint &p, const TPoint &resolution) const;
   Octant toFirstOctant(TPoint &p1, TPoint &p2);
   void fillTriangle(const TVector4D &p1, const TVector4D &p2,
@@ -62,6 +66,8 @@ private:
                        const TPoint &resolution);
   float areaTriangle(const TVector4D &p1, const TVector4D &p2,
                      const TVector4D &p3);
+  bool solveQuadratic(const float &a, const float &b, const float &c, float &x0,
+                      float &x1);
 };
 
 #endif // DRAWLINE_H

@@ -64,13 +64,21 @@ public:
     TVector3D pos;
     TVector3D color;
   };
+  struct Phong {
+    struct light light_dir;
+    float Ka;
+    float Kd;
+    float Ks;
+    int shin;
+  };
   struct lights {
     struct light ambient;
     struct light diffuse;
     struct light gourand;
-    struct light phong;
+    struct Phong phong;
     struct light flatShading;
   };
+
   struct input {
     bool wireframe;
     bool faceHiding;
