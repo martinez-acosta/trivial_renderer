@@ -22,6 +22,8 @@ typedef struct bezier_surface {
   struct bezier_curve c1;
   struct bezier_curve c2;
   struct bezier_curve c3;
+  TVector4D u;
+  TVector4D v;
 } bezier_surface;
 
 typedef struct hermite_surface {
@@ -85,6 +87,7 @@ public:
     bool flatShading;
     bool zBuffer;
     bool atime;
+    bool curvaDeBezier;
     int tiempo;
 
     bool lightAmbient;
@@ -117,6 +120,7 @@ public:
   TModel();
   struct input info;
   void rotate(const TVector3D &vector);
+  void rotate(const TVector3D &vector, TVector3D &vertex);
   void scale(const TVector3D &vector);
   void translate(const TVector3D &vector);
   void setPerspective();

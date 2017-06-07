@@ -83,6 +83,9 @@ struct gengetopt_args_info
   char * bezier_curve_arg;	/**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4.  */
   char * bezier_curve_orig;	/**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4 original value given at command line.  */
   const char *bezier_curve_help; /**< @brief curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4 help description.  */
+  char * bcurve_arg;	/**< @brief curva de bézier a leer.  */
+  char * bcurve_orig;	/**< @brief curva de bézier a leer original value given at command line.  */
+  const char *bcurve_help; /**< @brief curva de bézier a leer help description.  */
   char * hermite_curve_arg;	/**< @brief curva de hermite a seguir con dos puntos de control en la forma p1,p2.  */
   char * hermite_curve_orig;	/**< @brief curva de hermite a seguir con dos puntos de control en la forma p1,p2 original value given at command line.  */
   const char *hermite_curve_help; /**< @brief curva de hermite a seguir con dos puntos de control en la forma p1,p2 help description.  */
@@ -133,6 +136,7 @@ struct gengetopt_args_info
   unsigned int wireframe_given ;	/**< @brief Whether wireframe was given.  */
   unsigned int faceHiding_given ;	/**< @brief Whether faceHiding was given.  */
   unsigned int bezier_curve_given ;	/**< @brief Whether bezier-curve was given.  */
+  unsigned int bcurve_given ;	/**< @brief Whether bcurve was given.  */
   unsigned int hermite_curve_given ;	/**< @brief Whether hermite-curve was given.  */
   unsigned int bezier_surface_given ;	/**< @brief Whether bezier-surface was given.  */
   unsigned int hermite_surface_given ;	/**< @brief Whether hermite-surface was given.  */

@@ -41,6 +41,7 @@ private:
   void getTranslate();
   void getViewport();
   void getResolution();
+  void getBezierSurface(std::string &file, TModel &model);
   float toRad(float degree) const;
 };
 

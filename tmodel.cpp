@@ -50,7 +50,7 @@ TModel::TModel() {
   info.faceHiding = false;
   info.flatShading = false;
   info.zBuffer = false;
-
+  info.curvaDeBezier = false;
   info.lightAmbient = false;
   info.lightDiffuse = false;
   info.lightSpecular = false;
@@ -253,6 +253,49 @@ void TModel::rotate(const TVector3D &vector) {
   }
 }
 
+void TModel::rotate(const TVector3D &vector, TVector3D &vertex) {
+  TMatrix4x4 m;
+  TVector4D tmp(vertex.x, vertex.y, vertex.z, 1);
+  // Rotación respecto a x
+  if (vector.x != 0.0f) {
+    m.fill(0.0f);
+    m(0, 0) = 1.0f;
+    m(1, 1) = std::cos(vector.x);
+    m(1, 2) = -1.0f * std::sin(vector.x);
+    m(2, 1) = std::sin(vector.x);
+    m(2, 2) = std::cos(vector.x);
+    m(3, 3) = 1.0f;
+    tmp = tmp * m;
+  }
+  // Rotación respecto a y
+  if (vector.y != 0.0f) {
+    m.fill(0.0f);
+    m(0, 0) = std::cos(vector.y);
+    m(0, 2) = std::sin(vector.y);
+    m(1, 1) = 1.0f;
+    m(2, 0) = -1.0f * std::sin(vector.y);
+    m(2, 2) = std::cos(vector.y);
+    m(3, 3) = 1.0f;
+
+    tmp = tmp * m;
+  }
+
+  // Rotación respecto a z
+  if (vector.z != 0.0f) {
+    m.fill(0.0f);
+    m(0, 0) = std::cos(vector.z);
+    m(0, 1) = -1.0f * std::sin(vector.z);
+    m(1, 0) = std::sin(vector.z);
+    m(1, 1) = std::cos(vector.z);
+    m(2, 2) = 1.0f;
+    m(3, 3) = 1.0f;
+
+    tmp = tmp * m;
+  }
+  vertex.x = tmp.x;
+  vertex.y = tmp.y;
+  vertex.z = tmp.z;
+}
 void TModel::translate(const TVector3D &vector) {
   TMatrix4x4 m;
 

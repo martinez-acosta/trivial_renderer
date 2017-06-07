@@ -1,33 +1,8 @@
 ﻿#include "tdraw.h"
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 TDraw::TDraw() : a(255), r(255), g(255), b(255), x(0), y(0) {}
-
-float clamp(const float &lo, const float &hi, const float &v) {
-  return std::max(lo, std::min(hi, v));
-}
-// [comment]
-// Compute reflection direction
-// [/comment]
-TVector3D reflect(const TVector3D &I, const TVector3D &N) {
-  return I - 2 * I.dotProduct(N, I) * N;
-}
-
-bool TDraw::solveQuadratic(const float &a, const float &b, const float &c,
-                           float &x0, float &x1) {
-  float discr = b * b - 4 * a * c;
-  if (discr < 0)
-    return false;
-  else if (discr == 0) {
-    x0 = x1 = -0.5 * b / a;
-  } else {
-    float q = (b > 0) ? -0.5 * (b + sqrt(discr)) : -0.5 * (b - sqrt(discr));
-    x0 = q / a;
-    x1 = c / q;
-  }
-
-  return true;
-}
 
 bool TDraw::isInImage(const TPoint &p, const TPoint &resolution) const {
   return p.x >= 0 && p.x < resolution.x && p.y >= 0 && p.y < resolution.y;
@@ -743,27 +718,6 @@ void TDraw::phongShading(std::vector<unsigned char> &data,
     tmp3D = model.list_normals.at(face.v3 - 1);
     n2 = {tmp3D.x, tmp3D.y, tmp3D.z};
 
-    // Calculamos iluminación de Phong
-
-    // phong
-    float Ka = model.info.luces.phong.Ka;
-    float Kd = model.info.luces.phong.Kd;
-    float Ks = model.info.luces.phong.Ks;
-    float diff;
-    float spec;
-    int shin = model.info.luces.phong.shin;
-    TVector3D light = model.info.luces.phong.light_dir.pos.normalize() -
-                      TVector3D(w0.x, w0.y, w0.z).normalize();
-
-    normal = n0.normalize();
-
-    TVector3D r = (2 * (normal * (normal.dotProduct(normal, light)))) - light;
-    r = r.normalize();
-    // Difusa
-    diff = std::max(0.f, normal.dotProduct(normal, light));
-    // Especular
-    spec = std::pow(normal.dotProduct(view.normalize(), r), shin);
-
     // Cambio de base: Global a espacio de la cámara
 
     camVector0 = w0 * MworldToCam;
@@ -864,9 +818,9 @@ void TDraw::phongShading(std::vector<unsigned char> &data,
       TVector3D c1(0, 0.5, 0);
       TVector3D c2(0, 0, 0.5);
 
-      /*c0 = n0.normalize();
+      c0 = n0.normalize();
       c1 = n1.normalize();
-      c2 = n2.normalize();*/
+      c2 = n2.normalize();
       for (int y = min.y; y < max.y; y++)
         for (int x = min.x; x < max.x; x++) {
           p = {static_cast<float>(x), static_cast<float>(y), 0};
@@ -882,7 +836,27 @@ void TDraw::phongShading(std::vector<unsigned char> &data,
             g0 = a0 * c0[1] + a1 * c1[1] + a2 * c2[1];
             b0 = a0 * c0[2] + a1 * c1[2] + a2 * c2[2];
 
-            color = TVector3D(r0, g0, b0);
+            normal = TVector3D(r0, g0, b0);
+            // Calculamos iluminación de Phong
+
+            // phong
+            float Ka = model.info.luces.phong.Ka;
+            float Kd = model.info.luces.phong.Kd;
+            float Ks = model.info.luces.phong.Ks;
+            float diff;
+            float spec;
+            int shin = model.info.luces.phong.shin;
+            TVector3D light = model.info.luces.phong.light_dir.pos.normalize() -
+                              TVector3D(w0.x, w0.y, w0.z).normalize();
+
+            TVector3D r =
+                (2 * (normal * (normal.dotProduct(normal, light)))) - light;
+            r = r.normalize();
+            // Difusa
+            diff = std::max(0.f, normal.dotProduct(normal, light));
+            // Especular
+            spec = std::pow(normal.dotProduct(view.normalize(), r), shin);
+
             float oneOverZ = q0.z * a0 + q1.z * a1 + q2.z * a2;
             float z = 1 / oneOverZ;
             if (z < depthBuffer[y * resolution.x + x]) {
@@ -910,11 +884,11 @@ void TDraw::phongShading(std::vector<unsigned char> &data,
               color = color * 255;
               if (isInImage(TPoint(x, y), resolution)) {
                 data[4 * resolution.x * y + 4 * x + 0] =
-                    std::min(255, static_cast<int>((color.x * intensity)));
+                    std::min(255, static_cast<int>((color.x)));
                 data[4 * resolution.x * y + 4 * x + 1] =
-                    std::min(255, static_cast<int>((color.y * intensity)));
+                    std::min(255, static_cast<int>((color.y)));
                 data[4 * resolution.x * y + 4 * x + 2] =
-                    std::min(255, static_cast<int>((color.z * intensity)));
+                    std::min(255, static_cast<int>((color.z)));
                 data[4 * resolution.x * y + 4 * x + 3] = a;
               }
             }
@@ -1446,6 +1420,126 @@ void TDraw::fillTriangle(const TVector4D &p1, const TVector4D &p2,
       }
     }
 }
+void TDraw::bezierCurve(TImage &frame, std::vector<float> &depthBuffer,
+                        const TPoint &resolution, TModel &model,
+                        struct bezier_curve *curv) {
+  TVector3D interpolated;
+  TVector4D p;
+
+  float t, k0, k1, k2, k3;
+  TVector4D camVector0, camVector1, camVector2, camVector3;
+  // Matriz de cambio de base: Espacio global a espacio de cámara
+  TMatrix4x4 MworldToCam;
+  TMatrix4x4 MProj;
+  std::vector<TPoint> pts;
+  std::vector<unsigned char> &data = frame.getData();
+  MworldToCam.fill(0);
+  MProj.fill(0);
+  // Asignamos cámara
+  MProj(0, 0) = 1;
+  MProj(1, 1) = 1;
+  MProj(2, 2) = 1;
+  MProj(3, 3) = 1;
+
+  MworldToCam(0, 0) = 1;
+  MworldToCam(1, 1) = 1;
+  MworldToCam(2, 2) = 1;
+  MworldToCam(3, 3) = 1;
+  MworldToCam(0, 3) = model.info.cam.pos.x;
+  MworldToCam(1, 3) = model.info.cam.pos.y;
+  MworldToCam(2, 3) = model.info.cam.pos.z;
+
+  // Asignamos perspectiva y frustum
+  model.setPerspective();
+  model.setFrustum(MProj);
+  // Inicializamos el z buffer
+  for (unsigned y = 0; y < resolution.y; y++)
+    for (unsigned x = 0; x < resolution.x; x++) {
+      depthBuffer[resolution.x * y + x] = model.info.cam.far;
+    }
+  struct bezier_curve curve;
+
+  curve.p0.x = curv->p0.x;
+  curve.p0.y = curv->p0.y;
+  curve.p0.z = curv->p0.z;
+
+  curve.p1.x = curv->p1.x;
+  curve.p1.y = curv->p1.y;
+  curve.p1.z = curv->p1.z;
+
+  curve.p2.x = curv->p2.x;
+  curve.p2.y = curv->p2.y;
+  curve.p2.z = curv->p2.z;
+
+  curve.p3.x = curv->p3.x;
+  curve.p3.y = curv->p3.y;
+  curve.p3.z = curv->p3.z;
+
+  TVector4D c0(curve.p0.x, curve.p0.y, curve.p0.z, 1);
+  TVector4D c1(curve.p1.x, curve.p1.y, curve.p1.z, 1);
+  TVector4D c2(curve.p2.x, curve.p2.y, curve.p2.z, 1);
+  TVector4D c3(curve.p3.x, curve.p3.y, curve.p3.z, 1);
+
+  // Cambio de base: Global a espacio de la cámara
+  camVector0 = c0 * MworldToCam;
+  camVector1 = c1 * MworldToCam;
+  camVector2 = c2 * MworldToCam;
+  camVector3 = c3 * MworldToCam;
+  homogeneusDivide(camVector0);
+  homogeneusDivide(camVector1);
+  homogeneusDivide(camVector2);
+  homogeneusDivide(camVector3);
+
+  // Proyección en perspectiva
+  c0 = camVector0 * MProj;
+  c1 = camVector1 * MProj;
+  c2 = camVector2 * MProj;
+  c3 = camVector3 * MProj;
+  homogeneusDivide(c0);
+  homogeneusDivide(c1);
+  homogeneusDivide(c2);
+  homogeneusDivide(c3);
+  // Cambiamos a espacio de raster
+
+  TPoint q0, q1, q2, q3;
+
+  q0.x = std::min((u_int32_t)resolution.x - 1,
+                  (u_int32_t)((c0.x + 1) * 0.5 * resolution.x));
+  q0.y = std::min((u_int32_t)resolution.y - 1,
+                  (u_int32_t)((1 - (c0.y + 1) * 0.5) * resolution.y));
+
+  q1.x = std::min((u_int32_t)resolution.x - 1,
+                  (u_int32_t)((c1.x + 1) * 0.5 * resolution.x));
+  q1.y = std::min((u_int32_t)resolution.y - 1,
+                  (u_int32_t)((1 - (c1.y + 1) * 0.5) * resolution.y));
+
+  q2.x = std::min((u_int32_t)resolution.x - 1,
+                  (u_int32_t)((c2.x + 1) * 0.5 * resolution.x));
+  q2.y = std::min((u_int32_t)resolution.y - 1,
+                  (u_int32_t)((1 - (c2.y + 1) * 0.5) * resolution.y));
+
+  q3.x = std::min((u_int32_t)resolution.x - 1,
+                  (u_int32_t)((c3.x + 1) * 0.5 * resolution.x));
+  q3.y = std::min((u_int32_t)resolution.y - 1,
+                  (u_int32_t)((1 - (c3.y + 1) * 0.5) * resolution.y));
+
+  for (int j = 0; j < 1000; j++) {
+    t = j / static_cast<float>(1000);
+    k0 = (1 - t) * (1 - t) * (1 - t);
+    k1 = 3 * (1 - t) * (1 - t) * t;
+    k2 = 3 * (1 - t) * t * t;
+    k3 = t * t * t;
+    p.x = static_cast<int>(q0.x * k0 + q1.x * k1 + q2.x * k2 + q3.x * k3);
+    p.y = static_cast<int>(q0.y * k0 + q1.y * k1 + q2.y * k2 + q3.y * k3);
+    if (isInImage(TPoint(p.x, p.y), resolution)) {
+      data[4 * resolution.x * p.y + 4 * p.x + 0] = 255;
+      data[4 * resolution.x * p.y + 4 * p.x + 1] = 255;
+      data[4 * resolution.x * p.y + 4 * p.x + 2] = 255;
+      data[4 * resolution.x * p.y + 4 * p.x + 3] = a;
+    }
+  }
+}
+
 void TDraw::setAmbientLight(const TVector4D &p1, const TVector4D &p2,
                             const TVector4D &p3,
                             std::vector<unsigned char> &img,

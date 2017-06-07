@@ -1,5 +1,6 @@
 #ifndef TDRAW_H
 #define TDRAW_H
+#include "timage.h"
 #include "tmatrix4x4.h"
 #include "tmodel.h"
 #include "tshading.h"
@@ -28,6 +29,11 @@ public:
   void phongShading(std::vector<unsigned char> &data,
                     std::vector<float> &depthBuffer, const TPoint &resolution,
                     TModel &model, TPoint &interpolated);
+  void bezierSurface(TImage &frame, std::vector<float> &depthBuffer,
+                     const TPoint &resolution, TModel &model);
+  void bezierCurve(TImage &frame, std::vector<float> &depthBuffer,
+                   const TPoint &resolution, TModel &model,
+                   struct bezier_curve *curv);
   void ambientLight(std::vector<unsigned char> &data,
                     std::vector<float> &depthBuffer, const TPoint &resolution,
                     TModel &model);
@@ -66,8 +72,6 @@ private:
                        const TPoint &resolution);
   float areaTriangle(const TVector4D &p1, const TVector4D &p2,
                      const TVector4D &p3);
-  bool solveQuadratic(const float &a, const float &b, const float &c, float &x0,
-                      float &x1);
 };
 
 #endif // DRAWLINE_H

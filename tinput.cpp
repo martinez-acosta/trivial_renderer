@@ -2,6 +2,7 @@
 #include <boost/algorithm/string.hpp>
 #include <vector>
 
+void TInput::getBezierSurface(std::string &file, TModel &model) {}
 TInput::TInput() {
 
   rotate_given = false;
@@ -102,11 +103,24 @@ void TInput::getInput(int argc, char **argv, TModel &model) {
   if (args_info.bezier_curve_given)
     model.info.bezierCurve = true;
 
+  if (args_info.bcurve_given) {
+    model.info.curvaDeBezier = true;
+    sscanf(args_info.bcurve_arg,
+           "%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f%c%f",
+           &model.info.cbezier.p0.x, &a, &model.info.cbezier.p0.y, &a,
+           &model.info.cbezier.p0.z, &a, &model.info.cbezier.p1.x, &a,
+           &model.info.cbezier.p1.y, &a, &model.info.cbezier.p1.z, &a,
+           &model.info.cbezier.p2.x, &a, &model.info.cbezier.p2.y, &a,
+           &model.info.cbezier.p2.z, &a, &model.info.cbezier.p3.x, &a,
+           &model.info.cbezier.p3.y, &a, &model.info.cbezier.p3.z);
+  }
   if (args_info.hermite_curve_given)
     model.info.hermiteCurve = true;
 
-  if (args_info.bezier_surface_given)
+  if (args_info.bezier_surface_given) {
     model.info.bezierSurface = true;
+    // getBezierSurface(args_info.bezierSurface_arg, model);
+  }
 
   if (args_info.hermite_surface_given)
     model.info.hermiteSurface = true;

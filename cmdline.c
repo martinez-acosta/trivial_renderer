@@ -52,6 +52,7 @@ const char *gengetopt_args_info_help[] = {
   "      --wireframe               activa el renderizado wireframe",
   "      --faceHiding              activa el ocultamiento de caras",
   "      --bezier-curve=STRING     curva de bézier a seguir con cuatro puntos de\n                                  control en la forma p1,p2,p3,p4",
+  "      --bcurve=STRING           curva de bézier a leer",
   "      --hermite-curve=STRING    curva de hermite a seguir con dos puntos de\n                                  control en la forma p1,p2",
   "      --bezier-surface=STRING   archivo de superficie de bézier con los 16\n                                  puntos",
   "      --hermite-surface=STRING  archivo de superficie de hermite con los 16\n                                  puntos",
@@ -106,6 +107,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->wireframe_given = 0 ;
   args_info->faceHiding_given = 0 ;
   args_info->bezier_curve_given = 0 ;
+  args_info->bcurve_given = 0 ;
   args_info->hermite_curve_given = 0 ;
   args_info->bezier_surface_given = 0 ;
   args_info->hermite_surface_given = 0 ;
@@ -151,6 +153,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->scale_z_orig = NULL;
   args_info->bezier_curve_arg = NULL;
   args_info->bezier_curve_orig = NULL;
+  args_info->bcurve_arg = NULL;
+  args_info->bcurve_orig = NULL;
   args_info->hermite_curve_arg = NULL;
   args_info->hermite_curve_orig = NULL;
   args_info->bezier_surface_arg = NULL;
@@ -197,17 +201,18 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->wireframe_help = gengetopt_args_info_help[15] ;
   args_info->faceHiding_help = gengetopt_args_info_help[16] ;
   args_info->bezier_curve_help = gengetopt_args_info_help[17] ;
-  args_info->hermite_curve_help = gengetopt_args_info_help[18] ;
-  args_info->bezier_surface_help = gengetopt_args_info_help[19] ;
-  args_info->hermite_surface_help = gengetopt_args_info_help[20] ;
-  args_info->line_help = gengetopt_args_info_help[21] ;
-  args_info->zBuffer_help = gengetopt_args_info_help[22] ;
-  args_info->specular_help = gengetopt_args_info_help[23] ;
-  args_info->ambient_help = gengetopt_args_info_help[24] ;
-  args_info->diffuse_help = gengetopt_args_info_help[25] ;
-  args_info->phong_help = gengetopt_args_info_help[26] ;
-  args_info->gourand_help = gengetopt_args_info_help[27] ;
-  args_info->flatShading_help = gengetopt_args_info_help[28] ;
+  args_info->bcurve_help = gengetopt_args_info_help[18] ;
+  args_info->hermite_curve_help = gengetopt_args_info_help[19] ;
+  args_info->bezier_surface_help = gengetopt_args_info_help[20] ;
+  args_info->hermite_surface_help = gengetopt_args_info_help[21] ;
+  args_info->line_help = gengetopt_args_info_help[22] ;
+  args_info->zBuffer_help = gengetopt_args_info_help[23] ;
+  args_info->specular_help = gengetopt_args_info_help[24] ;
+  args_info->ambient_help = gengetopt_args_info_help[25] ;
+  args_info->diffuse_help = gengetopt_args_info_help[26] ;
+  args_info->phong_help = gengetopt_args_info_help[27] ;
+  args_info->gourand_help = gengetopt_args_info_help[28] ;
+  args_info->flatShading_help = gengetopt_args_info_help[29] ;
   
 }
 
@@ -319,6 +324,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->scale_z_orig));
   free_string_field (&(args_info->bezier_curve_arg));
   free_string_field (&(args_info->bezier_curve_orig));
+  free_string_field (&(args_info->bcurve_arg));
+  free_string_field (&(args_info->bcurve_orig));
   free_string_field (&(args_info->hermite_curve_arg));
   free_string_field (&(args_info->hermite_curve_orig));
   free_string_field (&(args_info->bezier_surface_arg));
@@ -405,6 +412,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "faceHiding", 0, 0 );
   if (args_info->bezier_curve_given)
     write_into_file(outfile, "bezier-curve", args_info->bezier_curve_orig, 0);
+  if (args_info->bcurve_given)
+    write_into_file(outfile, "bcurve", args_info->bcurve_orig, 0);
   if (args_info->hermite_curve_given)
     write_into_file(outfile, "hermite-curve", args_info->hermite_curve_orig, 0);
   if (args_info->bezier_surface_given)
@@ -739,6 +748,7 @@ cmdline_parser_internal (
         { "wireframe",	0, NULL, 0 },
         { "faceHiding",	0, NULL, 0 },
         { "bezier-curve",	1, NULL, 0 },
+        { "bcurve",	1, NULL, 0 },
         { "hermite-curve",	1, NULL, 0 },
         { "bezier-surface",	1, NULL, 0 },
         { "hermite-surface",	1, NULL, 0 },
@@ -985,6 +995,20 @@ cmdline_parser_internal (
                 &(local_args_info.bezier_curve_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "bezier-curve", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* curva de bézier a leer.  */
+          else if (strcmp (long_options[option_index].name, "bcurve") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->bcurve_arg), 
+                 &(args_info->bcurve_orig), &(args_info->bcurve_given),
+                &(local_args_info.bcurve_given), optarg, 0, 0, ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "bcurve", '-',
                 additional_error))
               goto failure;
           
