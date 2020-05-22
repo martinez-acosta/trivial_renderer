@@ -1,0 +1,38 @@
+purpose "Render"
+usage "renderer [OPTION...]"
+description "varios algoritmos de computer graphics"
+package "renderer_t"
+version "0.1"
+
+#Options
+option "input" i "archivo a leer" string required
+option "output_dir" d "directorio de salida" string optional
+option "resolution" - "resolución de la imagen en la forma <x,y>" string required
+option "camera" - "coordenadas de la cámara <x,y,z>" string required
+option "angleOfView" - "angleOfView" string required
+option "near" - "plano cercano" string optional required
+option "far" - "plano lejano" string optional required
+
+option "rotate" - "Rotación x,y,z" string optional
+option "time" - "tiempo a animar en minutos" string optional
+option "scale" s "Escalar la figura en x,y,z" string optional
+option "scale-x" - "Escala en x" string optional
+option "scale-y" - "Escala en y" string optional
+option "scale-z" - "Escala en z" string optional
+
+option "wireframe" - "activa el renderizado wireframe" optional
+option "faceHiding" - "activa el ocultamiento de caras" optional
+option "bezier-curve" - "curva de bézier a seguir con cuatro puntos de control en la forma p1,p2,p3,p4" string optional
+option "bcurve" - "curva de bézier a leer" string optional
+option "hermite-curve" - "curva de hermite a seguir con dos puntos de control en la forma p1,p2" string optional
+option "bezier-surface" - "archivo de superficie de bézier con los 16 puntos" string optional
+option "hermite-surface" - "archivo de superficie de hermite con los 16 puntos" string optional
+option "line" - "línea a seguir, dos puntos: p1,p2" string optional
+
+option "zBuffer" - "z bufffer con coordenadas baricéntricas" optional
+option "specular" - "activa la iluminación especular" string optional
+option "ambient" - "activa la iluminación de ambiente" string optional
+option "diffuse" - "activa la iluminación difusa" string optional
+option "phong" - "modelo de iluminación de Phong" string optional
+option "gourand" - "modelo de iluminación de Gourand" string optional
+option "flatShading" - "activa el renderizado con flatShading" string optional

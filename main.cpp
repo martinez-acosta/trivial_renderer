@@ -22,12 +22,12 @@ int main(int argc, char *argv[]) {
   // Si hay rotación
   // if (input.rotate_given)
   // model.rotate(input.rotate_vector);
-  model.rotate(TVector3D(toRad(0), toRad(180), 0));
+  // model.rotate(TVector3D(toRad(0), toRad(180), 0));
 
   // Si hay multiplicación por escalar
   // if (input.scale_given)
   // model.scale(TVector3D(100, 100, 100));
-  //    model.scale(input.scale_vector);
+  // model.scale(input.scale_vector);
 
   // Si hay traslación
   // if (input.translate_given)

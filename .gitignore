@@ -3,6 +3,7 @@
 build/
 *~
 *.autosave
+*.zip
 *.a
 *.core
 *.moc
