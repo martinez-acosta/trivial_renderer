@@ -18,12 +18,12 @@ Develop an application that implements computer graphics lighting algorithms and
 - https://tinyurl.com/y59kshsp
 
 # Videos
-Z-buffer: https://youtu.be/acT-4PxC0HY
-Bézier: https://youtu.be/KjO8wf7cfM8
-Wireframe: https://youtu.be/aHUB8vPaUEM
-Phong: https://youtu.be/S2gSLifHl_A
-Gourand: https://youtu.be/Ld6avcBQARA
-Flat Shading: https://youtu.be/B_mSwNqAs5g
+- Z-buffer: https://youtu.be/acT-4PxC0HY
+- Bézier: https://youtu.be/KjO8wf7cfM8
+- Wireframe: https://youtu.be/aHUB8vPaUEM
+- Phong: https://youtu.be/S2gSLifHl_A
+- Gourand: https://youtu.be/Ld6avcBQARA
+- Flat Shading: https://youtu.be/B_mSwNqAs5g
 
 
 ## Status
